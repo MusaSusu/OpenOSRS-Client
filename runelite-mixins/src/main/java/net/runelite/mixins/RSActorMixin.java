@@ -25,9 +25,15 @@
 package net.runelite.mixins;
 
 import com.google.common.collect.ImmutableSet;
+import java.awt.Graphics2D;
+import java.awt.Polygon;
+import java.awt.image.BufferedImage;
+import java.util.Iterator;
+import java.util.Set;
 import net.runelite.api.Actor;
 import net.runelite.api.ActorSpotAnim;
 import net.runelite.api.Hitsplat;
+import net.runelite.api.IterableHashTable;
 import net.runelite.api.NPC;
 import net.runelite.api.NPCComposition;
 import net.runelite.api.NpcID;
@@ -51,7 +57,6 @@ import net.runelite.api.mixins.MethodHook;
 import net.runelite.api.mixins.Mixin;
 import net.runelite.api.mixins.Shadow;
 import net.runelite.rs.api.RSActor;
-import net.runelite.rs.api.RSActorSpotAnim;
 import net.runelite.rs.api.RSClient;
 import net.runelite.rs.api.RSHealthBar;
 import net.runelite.rs.api.RSHealthBarDefinition;
@@ -59,12 +64,6 @@ import net.runelite.rs.api.RSHealthBarUpdate;
 import net.runelite.rs.api.RSIterableNodeDeque;
 import net.runelite.rs.api.RSNPC;
 import net.runelite.rs.api.RSNode;
-
-import java.awt.Graphics2D;
-import java.awt.Polygon;
-import java.awt.image.BufferedImage;
-import java.util.Iterator;
-import java.util.Set;
 
 @Mixin(RSActor.class)
 public abstract class RSActorMixin implements RSActor
@@ -221,32 +220,37 @@ public abstract class RSActorMixin implements RSActor
 		client.getCallbacks().post(animationChange);
 	}
 
-	@Inject
-	private ActorSpotAnim actorSpotAnim;
-
 	@MethodHook(value = "updateSpotAnimation", end = true)
 	@Inject
 	public void onGraphicChanged(int idx, int graphicID, int graphicHeight, int graphicStartCycle)
 	{
-		if (hasSpotAnim(graphicID))
-		{
-			setGraphic(graphicID);
-			actorSpotAnim = this.getSpotAnims().get(idx);
-		}
-
 		GraphicChanged graphicChanged = new GraphicChanged();
 		graphicChanged.setActor(this);
 		client.getCallbacks().post(graphicChanged);
 	}
 
-	@FieldHook("graphicsCount")
 	@Inject
-	public void onGraphicsCountChanged(int idx)
+	@Override
+	public void createSpotAnim(int id, int spotAnimId, int height, int delay)
 	{
-		if (!hasSpotAnim(getGraphic()))
+		IterableHashTable<ActorSpotAnim> spotAnims = this.getSpotAnims();
+		ActorSpotAnim actorSpotAnim = (ActorSpotAnim) spotAnims.get((long) id);
+		if (actorSpotAnim != null)
 		{
-			setGraphic(-1);
-			actorSpotAnim = null;
+			actorSpotAnim.unlink();
+			this.setGraphicsCount(getGraphicsCount() - 1);
+		}
+
+		if (spotAnimId != -1)
+		{
+			byte frame = 0;
+			if (delay > 0)
+			{
+				frame = -1;
+			}
+
+			spotAnims.put(newActorSpotAnim(spotAnimId, height, client.getGameCycle() + delay, frame), (long) id);
+			this.setGraphicsCount(getGraphicsCount() + 1);
 		}
 	}
 
@@ -255,16 +259,27 @@ public abstract class RSActorMixin implements RSActor
 	public boolean hasSpotAnim(int spotAnimId)
 	{
 		Iterator<ActorSpotAnim> iter = this.getSpotAnims().iterator();
-
 		while (iter.hasNext())
 		{
-			RSActorSpotAnim rsActorSpotAnim = (RSActorSpotAnim) iter.next();
-			if (rsActorSpotAnim.getId() == spotAnimId)
+			ActorSpotAnim actorSpotAnim = (ActorSpotAnim) iter.next();
+			if (actorSpotAnim.getId() == spotAnimId)
 			{
 				return true;
 			}
 		}
 		return false;
+	}
+
+	@Inject
+	@Override
+	public void removeSpotAnim(int id)
+	{
+		ActorSpotAnim actorSpotAnim = this.getSpotAnims().get(id);
+		if (actorSpotAnim != null)
+		{
+			actorSpotAnim.unlink();
+			this.setGraphicsCount(getGraphicsCount() - 1);
+		}
 	}
 
 	/*@FieldHook("spotAnimation")
@@ -371,12 +386,12 @@ public abstract class RSActorMixin implements RSActor
 	 * Note that this event runs even if the hitsplat didn't show up,
 	 * i.e. the actor already had 4 visible hitsplats.
 	 *
-	 * @param type      The hitsplat type (i.e. color)
-	 * @param value     The value of the hitsplat (i.e. how high the hit was)
-	 * @param var3      unknown
-	 * @param var4      unknown
+	 * @param type The hitsplat type (i.e. color)
+	 * @param value The value of the hitsplat (i.e. how high the hit was)
+	 * @param var3 unknown
+	 * @param var4 unknown
 	 * @param gameCycle The gamecycle the hitsplat was applied on
-	 * @param duration  The amount of gamecycles the hitsplat will last for
+	 * @param duration The amount of gamecycles the hitsplat will last for
 	 */
 	@Inject
 	@MethodHook(value = "addHitSplat", end = true)
@@ -398,36 +413,114 @@ public abstract class RSActorMixin implements RSActor
 
 	@Inject
 	@Override
+	public int getGraphic()
+	{
+		Iterator iter = this.getSpotAnims().iterator();
+		if (iter.hasNext())
+		{
+			ActorSpotAnim actorSpotAnim = (ActorSpotAnim) iter.next();
+			return actorSpotAnim.getId();
+		}
+		else
+		{
+			return -1;
+		}
+	}
+
+	@Inject
+	@Override
+	public void setGraphic(int id)
+	{
+		if (id == -1)
+		{
+			this.removeSpotAnim(getGraphic());
+		}
+		else
+		{
+			Iterator iter = this.getSpotAnims().iterator();
+			if (iter.hasNext())
+			{
+				ActorSpotAnim var3 = (ActorSpotAnim) iter.next();
+				var3.setId(id);
+			}
+			else
+			{
+				ActorSpotAnim actorSpotAnim = this.newActorSpotAnim(id, 0, 0, 0);
+				this.getSpotAnims().put(actorSpotAnim, 0L);
+				this.setGraphicsCount(getGraphicsCount() + 1);
+			}
+		}
+	}
+
+	@Inject
+	@Override
 	public int getGraphicHeight()
 	{
-		return actorSpotAnim.getHeight();
+		Iterator iter = this.getSpotAnims().iterator();
+		if (iter.hasNext())
+		{
+			ActorSpotAnim actorSpotAnim = (ActorSpotAnim) iter.next();
+			return actorSpotAnim.getHeight();
+		}
+		else
+		{
+			return 0;
+		}
 	}
 
 	@Inject
 	@Override
 	public void setGraphicHeight(int height)
 	{
-		actorSpotAnim.setHeight(height);
+		Iterator iter = this.getSpotAnims().iterator();
+		if (iter.hasNext())
+		{
+			ActorSpotAnim actorSpotAnim = (ActorSpotAnim) iter.next();
+			actorSpotAnim.setHeight(height);
+		}
 	}
 
 	@Inject
 	@Override
 	public int getSpotAnimFrame()
 	{
-		return actorSpotAnim.getFrame();
+		Iterator iter = this.getSpotAnims().iterator();
+		if (iter.hasNext())
+		{
+			ActorSpotAnim actorSpotAnim = (ActorSpotAnim) iter.next();
+			return actorSpotAnim.getFrame();
+		}
+		else
+		{
+			return 0;
+		}
 	}
 
 	@Inject
 	@Override
 	public void setSpotAnimFrame(int id)
 	{
-		actorSpotAnim.setFrame(id);
+		Iterator iter = this.getSpotAnims().iterator();
+		if (iter.hasNext())
+		{
+			ActorSpotAnim actorSpotAnim = (ActorSpotAnim) iter.next();
+			actorSpotAnim.setFrame(id);
+		}
 	}
 
 	@Inject
 	@Override
 	public int getSpotAnimationFrameCycle()
 	{
-		return actorSpotAnim.getCycle();
+		Iterator iter = this.getSpotAnims().iterator();
+		if (iter.hasNext())
+		{
+			ActorSpotAnim actorSpotAnim = (ActorSpotAnim) iter.next();
+			return actorSpotAnim.getCycle();
+		}
+		else
+		{
+			return 0;
+		}
 	}
 }

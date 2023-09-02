@@ -127,6 +127,7 @@ import net.runelite.rs.api.RSChatChannel;
 import net.runelite.rs.api.RSClanChannel;
 import net.runelite.rs.api.RSClient;
 import net.runelite.rs.api.RSCollisionMap;
+import net.runelite.rs.api.RSDbTable;
 import net.runelite.rs.api.RSDbRowType;
 import net.runelite.rs.api.RSDbTableType;
 import net.runelite.rs.api.RSDualNode;
@@ -1043,29 +1044,138 @@ public abstract class RSClientMixin implements RSClient
 		}
 	}
 
-	@Copy("menuSort")
-	@Replace("menuSort")
-	public static final void copy$menuSort()
+	@Copy("menu")
+	@Replace("menu")
+	final void menu()
 	{
-		boolean var0 = false;
-
-		while (!var0)
+		boolean var1 = false;
+		int var2;
+		int var5;
+		while (!var1)
 		{
-			var0 = true;
-			for (int var1 = 0; var1 < client.getMenuOptionCount() - 1; ++var1)
+			var1 = true;
+			for (var2 = 0; var2 < client.getMenuOptionCount() - 1; ++var2)
 			{
-				if (client.getMenuOpcodes()[var1] < 1000 && client.getMenuOpcodes()[var1 + 1] > 1000)
+				if (client.getMenuOpcodes()[var2] < 1000 && client.getMenuOpcodes()[var2 + 1] > 1000)
 				{
-					sortMenuEntries(var1, var1 + 1);
-					var0 = false;
+					sortMenuEntries(var2, var2 + 1);
+					var1 = false;
+				}
+			}
+			if (var1 && !client.isMenuOpen())
+			{
+				client.getCallbacks().post(new PostMenuSort());
+			}
+		}
+
+		if (client.getDraggedWidget() == null)
+		{
+			int var19 = client.getMouseLastButton();
+			int var4;
+			int var7;
+			int var8;
+			int var20;
+			if (client.isMenuOpen())
+			{
+				int var3;
+				if (var19 != 1 && (client.isMouseCam() || var19 != 4))
+				{
+					var2 = client.getMouseX();
+					var3 = client.getMouseY();
+					if (var2 < client.getMenuX() - 10 || var2 > client.getMenuX() + client.getMenuWidth() + 10 || var3 < client.getMenuY() - 10 || var3 > client.getMenuY() + client.getMenuHeight() + 10)
+					{
+						client.setMenuOpen(false);
+						var4 = client.getMenuX();
+						var5 = client.getMenuY();
+						var20 = client.getMenuWidth();
+						var7 = client.getMenuHeight();
+
+						for (var8 = 0; var8 < client.getRootWidgetCount(); ++var8)
+						{
+							if (client.getWidgetWidths()[var8] + client.getWidgetPositionsX()[var8] > var4 && client.getWidgetPositionsX()[var8] < var4 + var20 && client.getWidgetPositionsY()[var8] + client.getWidgetHeights()[var8] > var5 && client.getWidgetPositionsY()[var8] < var5 + var7)
+							{
+								client.getValidRootWidgets()[var8] = true;
+							}
+						}
 					}
 				}
-			if (var0 && !client.isMenuOpen())
+
+				if (var19 == 1 || !client.isMouseCam() && var19 == 4)
 				{
-					client.getCallbacks().post(new PostMenuSort());
+					var2 = client.getMenuX();
+					var3 = client.getMenuY();
+					var4 = client.getMenuWidth();
+					var5 = client.getMouseLastPressedX();
+					var20 = client.getMouseLastPressedY();
+					var7 = -1;
+
+					int var15;
+					for (var8 = 0; var8 < client.getMenuOptionCount(); ++var8)
+					{
+						var15 = (client.getMenuOptionCount() - 1 - var8) * 15 + var3 + 31;
+						if (var5 > var2 && var5 < var4 + var2 && var20 > var15 - 13 && var20 < var15 + 3)
+						{
+							var7 = var8;
+						}
+					}
+
+					int var11;
+					int var12;
+					int var16;
+					if (var7 != -1 && var7 >= 0)
+					{
+						var8 = client.getMenuArguments1()[var7];
+						var15 = client.getMenuArguments2()[var7];
+						var16 = client.getMenuOpcodes()[var7];
+						var11 = client.getMenuIdentifiers()[var7];
+						var12 = client.getMenuItemIds()[var7];
+						String var13 = client.getMenuOptions()[var7];
+						String var14 = client.getMenuTargets()[var7];
+						client.sendMenuAction(var8, var15, var16, var11, var12, var13, var14, client.getMouseLastPressedX(), client.getMouseLastPressedY());
+					}
+
+					client.setMenuOpen(false);
+					var8 = client.getMenuX();
+					var15 = client.getMenuY();
+					var16 = client.getMenuWidth();
+					var11 = client.getMenuHeight();
+
+					for (var12 = 0; var12 < client.getRootWidgetCount(); ++var12)
+					{
+						if (client.getWidgetWidths()[var12] + client.getWidgetPositionsX()[var12] > var8 && client.getWidgetPositionsX()[var12] < var8 + var16 && client.getWidgetHeights()[var12] + client.getWidgetPositionsY()[var12] > var15 && client.getWidgetPositionsY()[var12] < var15 + var11)
+						{
+							client.getValidRootWidgets()[var12] = true;
+						}
+					}
+				}
+			}
+			else
+			{
+				var2 = client.getMenuOptionCount() - 1;
+				if ((var19 == 1 || !client.isMouseCam() && var19 == 4) && copy$shouldLeftClickOpenMenu())
+				{
+					var19 = 2;
+				}
+
+				if ((var19 == 1 || !client.isMouseCam() && var19 == 4) && client.getMenuOptionCount() > 0 && var2 >= 0)
+				{
+					var4 = client.getMenuArguments1()[var2];
+					var5 = client.getMenuArguments2()[var2];
+					var20 = client.getMenuOpcodes()[var2];
+					var7 = client.getMenuIdentifiers()[var2];
+					var8 = client.getMenuItemIds()[var2];
+					String var9 = client.getMenuOptions()[var2];
+					String var10 = client.getMenuTargets()[var2];
+					client.sendMenuAction(var4, var5, var20, var7, var8, var9, var10, client.getMouseLastPressedX(), client.getMouseLastPressedY());
+				}
+
+				if (var19 == 2 && client.getMenuOptionCount() > 0)
+				{
+					this.openMenu(client.getMouseLastPressedX(), client.getMouseLastPressedY());
 				}
 			}
 		}
+	}
 
 	@Inject
 	public static void sortMenuEntries(int left, int right)
@@ -3036,6 +3146,13 @@ public abstract class RSClientMixin implements RSClient
 	}
 
 	@Inject
+	@MethodHook(value = "doCycle", end = true)
+	protected final void doCycleEnd()
+	{
+		client.getCallbacks().tickEnd();
+	}
+
+	@Inject
 	public static void check(String name, RSEvictingDualNodeHashTable dualNodeHashTable)
 	{
 		boolean var3 = dualNodeHashTable.isTrashing();
@@ -3106,14 +3223,14 @@ public abstract class RSClientMixin implements RSClient
 	@Override
 	public RSModelData mergeModels(ModelData[] var0, int var1)
 	{
-		return newModelData(var0, var1);
+		return newModelData(Arrays.copyOf(var0, var1, getModelDataArray().getClass()), var1);
 	}
 
 	@Inject
 	@Override
 	public RSModelData mergeModels(ModelData... var0)
 	{
-		return newModelData(var0, var0.length);
+		return mergeModels(var0, var0.length);
 	}
 
 	@Inject
@@ -3303,7 +3420,17 @@ public abstract class RSClientMixin implements RSClient
 
 	@Inject
 	@Override
-	public Object getDBTableField(int rowID, int column, int tupleIndex, int fieldIndex)
+	public List getDBRowsByValue(int rowID, int column, int tupleIndex, Object value)
+	{
+		RSDbTable dbTable = client.getDbTable((rowID << 12 | column << 4));
+		Map columns = (Map) dbTable.getColumns().get(tupleIndex);
+		List rows = (List) columns.get(value);
+		return rows == null ? Collections.emptyList() : Collections.unmodifiableList(rows);
+	}
+
+	@Inject
+	@Override
+	public Object[] getDBTableField(int rowID, int column, int tupleIndex)
 	{
 		RSDbRowType dbRowType = client.getDbRowType(rowID);
 		RSDbTableType dbTableType = client.getDbTableType(dbRowType.getTableId());
@@ -3316,24 +3443,25 @@ public abstract class RSClientMixin implements RSClient
 			columnType = dbTableType.getDefaultValues()[column];
 		}
 
-		if (columnType == null)
-		{
-			return null;
-		}
-		else if (tupleIndex >= type.length)
+		if (tupleIndex >= type.length)
 		{
 			throw new IllegalArgumentException("tuple index too large");
 		}
+		else if (columnType == null)
+		{
+			return new Object[0];
+		}
 		else
 		{
-			if (fieldIndex > columnType.length / type.length)
+			int fieldLength = columnType.length / type.length;
+			Object[] field = new Object[fieldLength];
+
+			for (int fieldIndex = 0; fieldIndex < fieldLength; ++fieldIndex)
 			{
-				throw new IllegalArgumentException("field index too large");
+				field[fieldIndex] = columnType[fieldIndex * type.length + tupleIndex];
 			}
-			else
-			{
-				return columnType[tupleIndex * type.length + fieldIndex];
-			}
+
+			return field;
 		}
 	}
 
