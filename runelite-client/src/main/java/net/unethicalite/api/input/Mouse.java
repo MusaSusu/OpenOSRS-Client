@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.Canvas;
 import java.awt.Point;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -132,6 +133,13 @@ public class Mouse
 	public static synchronized void moved(int x, int y, Canvas canvas, long time)
 	{
 		MouseEvent event = new MouseEvent(canvas, MouseEvent.MOUSE_MOVED, time, 0, x, y, 0, false);
+		event.setSource("unethicalite");
+		canvas.dispatchEvent(event);
+	}
+
+	public static synchronized void dragged(int x, int y, Canvas canvas, long time)
+	{
+		MouseEvent event = new MouseEvent(canvas, MouseEvent.MOUSE_DRAGGED, time, InputEvent.BUTTON2_DOWN_MASK, x, y, 0, false);
 		event.setSource("unethicalite");
 		canvas.dispatchEvent(event);
 	}
