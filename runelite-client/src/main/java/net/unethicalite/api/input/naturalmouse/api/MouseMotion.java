@@ -52,8 +52,8 @@ public class MouseMotion
 		this.noiseProvider = nature.getNoiseProvider();
 		this.systemCalls = nature.getSystemCalls();
 		this.screenSize = systemCalls.getScreenSize();
-		this.xDest = limitByScreenWidth(xDest);
-		this.yDest = limitByScreenHeight(yDest);
+		this.xDest = xDest;
+		this.yDest = yDest;
 		this.random = random;
 		this.mouseInfo = nature.getMouseInfo();
 		this.speedManager = nature.getSpeedManager();
@@ -158,8 +158,8 @@ public class MouseMotion
 
 				int mousePosY = MathUtil.roundTowards(simulatedMouseY + deviation.getY() * deviationMultiplierY * effectFadeMultiplier + noiseY * effectFadeMultiplier, movement.destY);
 
-				mousePosX = limitByScreenWidth(mousePosX);
-				mousePosY = limitByScreenHeight(mousePosY);
+				mousePosX = mousePosX;
+				mousePosY = mousePosY;
 
 				systemCalls.setMousePosition(mousePosX, mousePosY);
 
