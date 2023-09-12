@@ -26,6 +26,14 @@ public class CameraController {
         }
     }
 
+    public static void alignCameraToNorth(double angle){
+        try {
+            Static.getInteractionHandler().moveCamera(deltaXToNorth(angle),0);
+        } catch (AWTException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static double angleFromLocal(LocalPoint A, LocalPoint B, LocalPoint player) {
         Vector3D vectorA = new Vector3D(A.getX(), A.getY(), 0);
         Vector3D vectorB = new Vector3D(B.getX(), B.getY(), 0);
@@ -119,14 +127,28 @@ public class CameraController {
         return -1;
     }
 
-    public static int deltaX(double angle) {
-        int deltaYaw = (int) (2048 * (angle/360));
-        int targetYaw = 2048 % (Static.getClient().getCameraYaw() + deltaYaw);
-        if (targetYaw>1024){
-            targetYaw = 2048 - targetYaw;
+
+    //Find x pixel mouse movement needed to align to north of view.
+    public static int deltaXToNorth(double angle) {
+        int deltaYaw = (int) -(2048 * (angle/360));
+        System.out.println("deltayaw" + deltaYaw);
+        int targetYaw = Static.getClient().getCameraYaw() + deltaYaw;
+        System.out.println("current yaw:"+ Static.getClient().getCameraYaw());
+        System.out.println("prev yaw:" + targetYaw);
+        if (targetYaw>=1024){
+            targetYaw = -(2048 % (2048 - targetYaw));
+        }
+        else
+        {
+            targetYaw = targetYaw;
         }
         System.out.println(targetYaw);
-        return -(targetYaw / 2);
+        return targetYaw / 2;
+    }
+
+    public static int deltaX(double angle) {
+        int deltaYaw = (int) -(2048 * (angle/360));
+        return deltaYaw/2 ;
     }
 
     public static Point centerOfView(){
