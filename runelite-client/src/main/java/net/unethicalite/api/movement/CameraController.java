@@ -4,21 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
 import net.runelite.api.coords.LocalPoint;
-import net.unethicalite.api.commons.Time;
 import net.unethicalite.api.entities.Players;
-import net.unethicalite.api.input.Mouse;
-import net.unethicalite.api.input.naturalmouse.NaturalMouse;
 import net.unethicalite.client.Static;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
-
-import javax.inject.Inject;
 import java.awt.*;
 
 @Slf4j
 public class CameraController {
 
-    public static void alignCameraToTarget(double angle){
+    public static void alignToTarget(double angle){
         try {
             Static.getInteractionHandler().moveCamera(deltaX(angle),0);
         } catch (AWTException e) {
@@ -26,7 +21,12 @@ public class CameraController {
         }
     }
 
-    public static void alignCameraToNorth(double angle){
+    public static void alignToNorth(double angle){
+        int deltaX = deltaXToNorth(angle);
+        if (Math.abs(deltaX) < 30)
+        {
+            return;
+        }
         try {
             Static.getInteractionHandler().moveCamera(deltaXToNorth(angle),0);
         } catch (AWTException e) {
