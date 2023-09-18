@@ -29,6 +29,7 @@ import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ClientShutdown;
+import net.runelite.client.plugins.musaPanel.MusaConfig;
 import net.runelite.client.util.RunnableExceptionLogger;
 import net.unethicalite.client.config.UnethicaliteConfig;
 
@@ -50,18 +51,21 @@ public class ClientSessionManager
 	private final SessionClient sessionClient;
 	private final UnethicaliteConfig unethicaliteConfig;
 
+	private final MusaConfig musaConfig;
+
 	private ScheduledFuture<?> scheduledFuture;
 	private UUID sessionId;
 
 	@Inject
 	ClientSessionManager(ScheduledExecutorService executorService,
 						 @Nullable Client client,
-						 SessionClient sessionClient, UnethicaliteConfig unethicaliteConfig)
+						 SessionClient sessionClient, UnethicaliteConfig unethicaliteConfig, MusaConfig musaConfig)
 	{
 		this.executorService = executorService;
 		this.client = client;
 		this.sessionClient = sessionClient;
 		this.unethicaliteConfig = unethicaliteConfig;
+		this.musaConfig = musaConfig;
 	}
 
 	public void start()
