@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Adam <Adam@sigterm.info>
+ * Copyright (c) 2023, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,34 +22,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package net.runelite.client.util;
 
-struct uniform {
-  int cameraYaw;
-  int cameraPitch;
-  int centerX;
-  int centerY;
-  int zoom;
-  int cameraX;
-  int cameraY;
-  int cameraZ;
-  int4 sinCosTable[2048];
-};
+import java.util.EnumSet;
+import net.runelite.http.api.worlds.WorldType;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
-struct shared_data {
-  int totalNum[12];        // number of faces with a given priority
-  int totalDistance[12];   // sum of distances to faces of a given priority
-  int totalMappedNum[18];  // number of faces with a given adjusted priority
-  int min10;               // minimum distance to a face of priority 10
-  uint renderPris[0];      // packed distance and face id
-};
-
-struct modelinfo {
-  int offset;   // offset into vertex buffer
-  int toffset;  // offset into texture buffer
-  int size;     // length in faces
-  int idx;      // write idx in target buffer
-  int flags;    // buffer, hillskew, plane, radius, orientation
-  int x;        // scene position x
-  int y;        // scene position y
-  int z;        // scene position z
-};
+public class WorldUtilTest
+{
+	@Test
+	public void testToWorldTypes()
+	{
+		assertEquals(WorldType.values().length, WorldUtil.toWorldTypes(EnumSet.allOf(WorldType.class)).size());
+	}
+}

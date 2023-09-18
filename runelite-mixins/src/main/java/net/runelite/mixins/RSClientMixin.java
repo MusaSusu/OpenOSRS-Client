@@ -68,6 +68,7 @@ import net.runelite.api.Tile;
 import net.runelite.api.VarPlayer;
 import net.runelite.api.VarbitComposition;
 import net.runelite.api.Varbits;
+import net.runelite.api.WidgetNode;
 import net.runelite.api.World;
 import net.runelite.api.WorldType;
 import net.runelite.api.clan.ClanChannel;
@@ -75,6 +76,7 @@ import net.runelite.api.clan.ClanRank;
 import net.runelite.api.clan.ClanSettings;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.AccountHashChanged;
 import net.runelite.api.events.BeforeMenuRender;
 import net.runelite.api.events.CanvasSizeChanged;
 import net.runelite.api.events.ChatMessage;
@@ -174,6 +176,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -245,7 +248,7 @@ public abstract class RSClientMixin implements RSClient
 	private static boolean invertYaw;
 
 	@Inject
-	private boolean gpu;
+	private int gpuFlags;
 
 	@Inject
 	private static boolean oldIsResized;
@@ -2348,14 +2351,21 @@ public abstract class RSClientMixin implements RSClient
 	@Override
 	public boolean isGpu()
 	{
-		return gpu;
+		return (gpuFlags & 1) == 1;
 	}
 
 	@Inject
 	@Override
-	public void setGpu(boolean gpu)
+	public void setGpuFlags(int gpuFlags)
 	{
-		this.gpu = gpu;
+		this.gpuFlags = gpuFlags;
+	}
+
+	@Inject
+	@Override
+	public int getGpuFlags()
+	{
+		return gpuFlags;
 	}
 
 	@Inject
@@ -3589,6 +3599,102 @@ public abstract class RSClientMixin implements RSClient
 	{
 		client.getClips().setViewportZoom(zoom);
 		client.setScale(zoom);
+	}
+
+	@Inject
+	@Override
+	public WidgetNode openInterface(int componentId, int interfaceId, int modalMode)
+	{
+		assert this.isClientThread() : "openInterface must be called on client thread";
+
+		Widget component = this.getWidget(componentId);
+		if (component == null)
+		{
+			throw new IllegalStateException("component does not exist");
+		}
+		else if (component.getType() != 0)
+		{
+			throw new IllegalStateException("component is not a layer");
+		}
+		else
+		{
+			RSInterfaceParent interfaceNode = (RSInterfaceParent) this.getComponentTable().get((long) componentId);
+			if (interfaceNode != null)
+			{
+				this.closeInterface(interfaceNode, interfaceId != interfaceNode.getId());
+			}
+
+			Iterator iter = this.getComponentTable().iterator();
+
+			RSInterfaceParent iface;
+			do
+			{
+				if (!iter.hasNext())
+				{
+					interfaceNode = newInterfaceParent();
+					interfaceNode.setId(interfaceId);
+					interfaceNode.setModalMode(modalMode);
+					this.getComponentTable().put(interfaceNode, (long) componentId);
+					this.loadInterface(interfaceId);
+					this.revalidateWidgetScroll(this.getWidgets()[componentId >> 16], component, false);
+					this.copy$runWidgetOnLoadListener(interfaceId);
+					int topLevelInterfaceId = this.getTopLevelInterfaceId();
+					if (topLevelInterfaceId != -1 && this.loadInterface(topLevelInterfaceId))
+					{
+						this.runComponentCloseListeners(this.getWidgets()[topLevelInterfaceId], 1);
+					}
+
+					return interfaceNode;
+				}
+
+				iface = (RSInterfaceParent) iter.next();
+			}
+			while (iface.getId() != interfaceId);
+
+			throw new IllegalStateException("interface " + interfaceId + " is already open");
+		}
+	}
+
+	@Inject
+	@Override
+	public void closeInterface(WidgetNode interfaceNode, boolean unload)
+	{
+		WidgetNode widgetNode = (WidgetNode) interfaceNode;
+		if (widgetNode != this.getComponentTable().get(widgetNode.getHash()))
+		{
+			throw new IllegalArgumentException("WidgetNode is no longer valid");
+		}
+		else
+		{
+			this.closeRSInterface(widgetNode, unload);
+		}
+	}
+
+	@Inject
+	@FieldHook("accountHash")
+	public void onAccountHashChanged(int var0)
+	{
+		if (this.callbacks != null)
+		{
+			this.callbacks.post(new AccountHashChanged());
+		}
+	}
+
+	@Inject
+	private int expandedMapLoadingChunks;
+
+	@Inject
+	@Override
+	public void setExpandedMapLoading(int chunks)
+	{
+		this.expandedMapLoadingChunks = Ints.constrainToRange(chunks, 0, 5);
+	}
+
+	@Inject
+	@Override
+	public int getExpandedMapLoading()
+	{
+		return expandedMapLoadingChunks;
 	}
 }
 

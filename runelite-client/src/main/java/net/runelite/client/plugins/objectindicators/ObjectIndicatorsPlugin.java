@@ -135,6 +135,7 @@ public class ObjectIndicatorsPlugin extends Plugin
 	protected void startUp()
 	{
 		overlayManager.add(overlay);
+		clientThread.invokeLater(this::reloadPoints);
 	}
 
 	@Override
@@ -193,15 +194,11 @@ public class ObjectIndicatorsPlugin extends Plugin
 		objects.removeIf(o -> o.getTileObject() == event.getGroundObject());
 	}
 
-	@Subscribe
-	public void onGameStateChanged(GameStateChanged gameStateChanged)
+	private void reloadPoints()
 	{
-		GameState gameState = gameStateChanged.getGameState();
-		if (gameState == GameState.LOADING)
+		points.clear();
+		if (client.getMapRegions() != null)
 		{
-			// Reload points with new map regions
-
-			points.clear();
 			for (int regionId : client.getMapRegions())
 			{
 				// load points for region
@@ -212,10 +209,17 @@ public class ObjectIndicatorsPlugin extends Plugin
 				}
 			}
 		}
+	}
 
-		if (gameStateChanged.getGameState() != GameState.LOGGED_IN && gameStateChanged.getGameState() != GameState.CONNECTION_LOST)
+	@Subscribe
+	public void onGameStateChanged(GameStateChanged gameStateChanged)
+	{
+		GameState gameState = gameStateChanged.getGameState();
+		if (gameState == GameState.LOADING)
 		{
+			// Reload points with new map regions
 			objects.clear();
+			reloadPoints();
 		}
 	}
 
@@ -622,9 +626,10 @@ public class ObjectIndicatorsPlugin extends Plugin
 			{
 				for (var p : points)
 				{
-					if (p.getColor() != null)
+					Color c = p.getColor();
+					if (c != null & !colors.contains(c))
 					{
-						colors.add(p.getColor());
+						colors.add(c);
 						if (colors.size() >= 5)
 						{
 							return colors;
