@@ -7,7 +7,7 @@ import net.runelite.client.plugins.musaPanel.QuestEnum;
 
 import javax.swing.*;
 
-public class QuestsPanel extends MusaPanelContainer {
+public class QuestsPanel extends QuestsPanelContainer {
     public QuestsPanel(MusaConfig config, ConfigManager configManager) {
         super("Quests",config, configManager);
     }

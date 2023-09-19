@@ -18,14 +18,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 
 
-public abstract class MusaPanelContainer extends JPanel
+public abstract class QuestsPanelContainer extends JPanel
 {
     @Getter
     private final String title;
     protected final MusaConfig config;
     protected final ConfigManager configManager;
 
-    public MusaPanelContainer(String title,MusaConfig config,ConfigManager configManager)
+    public QuestsPanelContainer(String title, MusaConfig config, ConfigManager configManager)
     {
         this.title = title;
         this.config = config;
@@ -98,7 +98,7 @@ public abstract class MusaPanelContainer extends JPanel
                 String newText = Text.titleCase(selectedItem);
                 label.setText(newText);
                 try {
-                    System.out.println("STARTING PLUGIN TEST");
+                    configManager.setConfiguration("MusaQuests","Quest",selectedItem);
                     Static.getInteractionHandler().startQuestPlugin();
                 } catch (PluginInstantiationException ex) {
                     System.out.println("cant start");
@@ -120,7 +120,6 @@ public abstract class MusaPanelContainer extends JPanel
             public void actionPerformed(ActionEvent e) {
                 // This code is executed when the button is clicked
                 JOptionPane.showMessageDialog(section, "Starting Quest");
-                configManager.setConfiguration(MusaConfig.CONFIG_GROUP, "Quest", QuestEnum.None);
                 label.setText("None");
                 try {
                     System.out.println("STOPPING PLUGIN TEST");
