@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 public class MusaPanelRepo extends PluginPanel
 {
-    private final List<MusaPanelContainer> containers = new ArrayList<>();
+    private final List<QuestsPanelContainer> containers = new ArrayList<>();
     private final JTabbedPane tabbedPane = new JTabbedPane();
 
     public MusaPanelRepo(Client client, MusaConfig config, ConfigManager configManager)
@@ -44,6 +44,6 @@ public class MusaPanelRepo extends PluginPanel
         {
             return;
         }
-        SwingUtilities.invokeLater(() -> containers.forEach(MusaPanelContainer::rebuild));
+        SwingUtilities.invokeLater(() -> containers.forEach(QuestsPanelContainer::rebuild));
     }
 }
