@@ -13,7 +13,7 @@ import net.runelite.client.game.SpriteManager;
 import net.runelite.client.game.WorldService;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.PluginManager;
-import net.runelite.client.plugins.musaPanel.MusaConfig;
+import net.runelite.client.plugins.OzonePanel.MusaConfig;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.unethicalite.api.movement.pathfinder.CollisionMap;

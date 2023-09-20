@@ -48,7 +48,7 @@ import net.runelite.client.config.RuneLiteConfig;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.menus.MenuManager;
-import net.runelite.client.plugins.musaPanel.MusaConfig;
+import net.runelite.client.plugins.OzonePanel.MusaConfig;
 import net.runelite.client.plugins.PluginManager;
 import net.runelite.client.task.Scheduler;
 import net.runelite.client.util.DeferredEventBus;
