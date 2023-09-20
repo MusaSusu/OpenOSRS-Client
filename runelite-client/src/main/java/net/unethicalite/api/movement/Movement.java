@@ -89,8 +89,8 @@ public class Movement
 		int sceneX = walkPoint.getX() - client.getBaseX();
 		int sceneY = walkPoint.getY() - client.getBaseY();
 
-		//double angle = CameraController.angleFromLocal(LocalPoint.fromScene(sceneX, sceneY));
-		//CameraController.alignToNorth(angle);
+		double angle = CameraController.angleFromLocal(LocalPoint.fromScene(sceneX, sceneY));
+		CameraController.alignToNorth(angle);
 
 		Point canv = Perspective.localToCanvas(client, LocalPoint.fromScene(sceneX, sceneY), client.getPlane());
 		int x = canv != null ? canv.getX() : -1;

@@ -131,10 +131,10 @@ public class CameraController {
     //Find x pixel mouse movement needed to align to north of view.
     public static int deltaXToNorth(double angle) {
         int deltaYaw = (int) -(2048 * (angle/360));
-        System.out.println("deltayaw" + deltaYaw);
+        //System.out.println("deltayaw" + deltaYaw);
         int targetYaw = Static.getClient().getCameraYaw() + deltaYaw;
-        System.out.println("current yaw:"+ Static.getClient().getCameraYaw());
-        System.out.println("prev yaw:" + targetYaw);
+        //System.out.println("current yaw:"+ Static.getClient().getCameraYaw());
+        //System.out.println("prev yaw:" + targetYaw);
         if (targetYaw>=1024){
             targetYaw = -(2048 % (2048 - targetYaw));
         }
@@ -142,7 +142,7 @@ public class CameraController {
         {
             targetYaw = targetYaw;
         }
-        System.out.println(targetYaw);
+        //System.out.println(targetYaw);
         return targetYaw / 2;
     }
 

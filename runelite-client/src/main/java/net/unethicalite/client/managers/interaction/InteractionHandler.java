@@ -3,6 +3,8 @@ package net.unethicalite.client.managers.interaction;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.MenuAction;
+import net.runelite.client.plugins.Plugin;
+import net.runelite.client.plugins.PluginInstantiationException;
 import net.unethicalite.api.SceneEntity;
 import net.unethicalite.api.commons.Rand;
 import net.unethicalite.api.commons.Time;
@@ -23,6 +25,40 @@ public class InteractionHandler {
     private Client client;
     @Inject
     private NaturalMouse naturalMouse;
+
+    private static int skillTabCounter = 0;
+
+    private static int cameraCounter = 0;
+
+    public void startPlugin() throws PluginInstantiationException {
+            Plugin plugin = Static.getPluginManager().getPlugins().stream().filter(x -> x.getName().matches("Mouse Tests")).findFirst().orElse(null);
+            System.out.println("Interaction handler running");
+            if (plugin != null)
+            {
+                Static.getPluginManager().setPluginEnabled(plugin,true);
+                Static.getPluginManager().startPlugin(plugin);
+            }
+    }
+
+    public void startQuestPlugin() throws PluginInstantiationException {
+        Plugin plugin = Static.getPluginManager().getPlugins().stream().filter(x -> x.getName().matches("MusaQuest")).findFirst().orElse(null);
+        System.out.println("Interaction handler for quest running");
+        if (plugin != null)
+        {
+            Static.getPluginManager().setPluginEnabled(plugin,true);
+            Static.getPluginManager().startPlugin(plugin);
+        }
+    }
+
+    public void stopQuestPlugin() throws PluginInstantiationException {
+        Plugin plugin = Static.getPluginManager().getPlugins().stream().filter(x -> x.getName().matches("MusaQuest")).findFirst().orElse(null);
+        System.out.println("Interaction handler for quest stopping");
+        if (plugin != null)
+        {
+            Static.getPluginManager().stopPlugin(plugin);
+            Static.getPluginManager().setPluginEnabled(plugin,false);
+        }
+    }
 
 
     void interact(int identifier, int opcode, int param0, int param1,
@@ -72,7 +108,6 @@ public class InteractionHandler {
 
     public void randomMouseMove() {
         Point current = Mouse.getPosition();
-        System.out.println("random mouse move");
         naturalMouse.moveTo(current.x + Rand.nextInt(-50, 50), current.y + Rand.nextInt(-50, 50));
     }
 
@@ -80,6 +115,30 @@ public class InteractionHandler {
     {
         return point.x < 0 || point.y < 0
                 || point.x > client.getViewportWidth() || point.y > client.getViewportHeight();
+    }
+
+    public static boolean checkSkillCounter()
+    {
+        if (skillTabCounter > 30){
+            skillTabCounter = 0;
+            return true;
+        }
+        if(Rand.nextBool()){
+            skillTabCounter++;
+        }
+        return false;
+    }
+
+    public static boolean checkCameraCounter()
+    {
+        if (cameraCounter > 30){
+            cameraCounter = 0;
+            return true;
+        }
+        if(Rand.nextBool()){
+            cameraCounter++;
+        }
+        return false;
     }
 
     public void dragItem(){
