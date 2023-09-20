@@ -4,7 +4,7 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.OzonePanel.MusaConfig;
 import net.unethicalite.client.managers.interaction.InteractMethod;
 
-public class ScriptsPanel extends MusaPanelContainer
+public class ScriptsPanel extends QuestsPanelContainer
 {
     public ScriptsPanel(MusaConfig config, ConfigManager configManager) {
         super("Scripts",config, configManager);

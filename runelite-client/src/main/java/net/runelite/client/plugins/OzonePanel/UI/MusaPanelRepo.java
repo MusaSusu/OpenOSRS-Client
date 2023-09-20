@@ -44,6 +44,6 @@ public class MusaPanelRepo extends PluginPanel
         {
             return;
         }
-        SwingUtilities.invokeLater(() -> containers.forEach(MusaPanelContainer::rebuild));
+        SwingUtilities.invokeLater(() -> containers.forEach(QuestsPanelContainer::rebuild));
     }
 }

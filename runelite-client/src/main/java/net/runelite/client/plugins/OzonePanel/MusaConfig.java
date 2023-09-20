@@ -16,7 +16,7 @@ public interface MusaConfig extends Config {
             description = "",
             position = 0
     )
-    default QuestEnum questSelection(){ return QuestEnum.None;}
+    default QuestEnum questSelection(){ return QuestEnum.RomeoAndJuliet;}
 
     @ConfigItem(
             keyName = "Quest",
