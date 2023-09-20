@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.musaPanel.UI;
+package net.runelite.client.plugins.OzonePanel.UI;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +7,7 @@ import net.runelite.api.Client;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
-import net.runelite.client.plugins.musaPanel.MusaConfig;
+import net.runelite.client.plugins.OzonePanel.MusaConfig;
 import net.runelite.client.ui.PluginPanel;
 import net.unethicalite.client.config.UnethicaliteConfig;
 

@@ -29,7 +29,7 @@ import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ClientShutdown;
-import net.runelite.client.plugins.musaPanel.MusaConfig;
+import net.runelite.client.plugins.OzonePanel.MusaConfig;
 import net.runelite.client.util.RunnableExceptionLogger;
 import net.unethicalite.client.config.UnethicaliteConfig;
 

@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.musaPanel;
+package net.runelite.client.plugins.OzonePanel;
 
 
 import net.runelite.client.config.Config;
