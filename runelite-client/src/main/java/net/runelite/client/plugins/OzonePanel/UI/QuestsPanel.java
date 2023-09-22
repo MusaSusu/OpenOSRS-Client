@@ -21,7 +21,7 @@ public class QuestsPanel extends QuestsPanelContainer {
     @Override
     protected void rebuild() {
         removeAll();
-
+        setLayout(new MigLayout());
         JPanel status = new JPanel(new MigLayout());
         status.add(add(createTextSection("Quest Running:")));
         JLabel currentQuest = new JLabel("None");
