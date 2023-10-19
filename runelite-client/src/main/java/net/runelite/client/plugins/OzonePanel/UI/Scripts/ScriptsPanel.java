@@ -9,6 +9,7 @@ import net.runelite.client.plugins.config.PluginConfigurationDescriptor;
 import net.runelite.client.ui.DynamicGridLayout;
 import net.runelite.client.ui.MultiplexingPluginPanel;
 import net.runelite.client.ui.PluginPanel;
+import net.unethicalite.client.managers.LoopedPluginManager;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -23,30 +24,33 @@ import java.awt.event.ActionListener;
 public class ScriptsPanel extends PluginPanel
 {
     private final ScriptsPluginsListPanel PluginList;
-    private JPanel CenterView;
+    private String script = new String("None");
+    private JLabel currentScript;
     @Inject
     public ScriptsPanel(MusaConfig config,
                         ConfigManager configManager,
                         ScriptsPluginsListPanel PluginList,
-                        Provider<ScriptsPluginsListPanel> PluginListProvider
+                        Provider<ScriptsPluginsListPanel> PluginListProvider,
+                        LoopedPluginManager loopedPluginManager
                         )
     {
         super(false);
         this.PluginList = PluginList;
 
+
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(0, 0, 0, 0));
         JPanel status = new JPanel(new BorderLayout());
         status.add(new JLabel("Scripts Running:"),BorderLayout.WEST);
-        JLabel currentScript = new JLabel("None");
+        this.currentScript = new JLabel(script);
         status.add(currentScript,BorderLayout.EAST);
         add(status,BorderLayout.NORTH);
 
         add(PluginList.getMuxer(),BorderLayout.CENTER);
     }
 
-    void updateCenterView()
+    public void updateScript(String newScript)
     {
-        PluginList.revalidate();
+        this.currentScript.setText(newScript);
     }
 }
