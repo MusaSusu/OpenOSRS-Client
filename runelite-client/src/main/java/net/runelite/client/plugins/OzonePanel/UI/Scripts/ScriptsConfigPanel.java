@@ -369,10 +369,6 @@ public class ScriptsConfigPanel extends PluginPanel {
 
         mainPanel.add(resetButton);
 
-        JButton backButton = new JButton("Back");
-        //backButton.addActionListener(e -> pluginList.getMuxer().popState());
-        mainPanel.add(backButton);
-
         if (refresh)
         {
             scrollPane.getVerticalScrollBar().setValue(scrollBarPosition);
@@ -413,7 +409,7 @@ public class ScriptsConfigPanel extends PluginPanel {
                 if (pluginToggle.isSelected())
                 {
                     try {
-                        startPlugin();
+                        pluginList.startPlugin(pluginConfig);
                     } catch (PluginInstantiationException e) {
                         throw new RuntimeException(e);
                     }
@@ -421,7 +417,7 @@ public class ScriptsConfigPanel extends PluginPanel {
                 else
                 {
                     try {
-                        stopPlugin();
+                        pluginList.stopPlugin(pluginConfig);
                     } catch (PluginInstantiationException e) {
                         throw new RuntimeException(e);
                     }
@@ -1143,18 +1139,6 @@ public class ScriptsConfigPanel extends PluginPanel {
         }
 
         return true;
-    }
-
-    private void startPlugin() throws PluginInstantiationException {
-        configManager.syncProperties(this.pluginConfig.getConfigDescriptor().getGroup().value());
-        pluginManager.setPluginEnabled(pluginConfig.getPlugin(), true);
-        pluginManager.startPlugin(pluginConfig.getPlugin());
-    }
-
-    private void stopPlugin() throws PluginInstantiationException {
-        configManager.syncProperties(this.pluginConfig.getConfigDescriptor().getGroup().value());
-        pluginManager.setPluginEnabled(pluginConfig.getPlugin(), false);
-        pluginManager.stopPlugin(pluginConfig.getPlugin());
     }
 
     ConfigDescriptor openConfigurationPanel()

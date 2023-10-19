@@ -1,20 +1,17 @@
 package net.runelite.client.plugins.OzonePanel.UI.Scripts;
 
 import lombok.Getter;
+import lombok.Setter;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigDescriptor;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
-import net.runelite.client.externalplugins.ExternalPluginManager;
 import net.runelite.client.plugins.*;
-import net.runelite.client.plugins.OzonePanel.MusaConfig;
-import net.runelite.client.plugins.OzonePanel.QuestEnum;
-import net.runelite.client.plugins.config.FixedWidthPanel;
 import net.runelite.client.plugins.config.PluginConfigurationDescriptor;
 import net.runelite.client.ui.DynamicGridLayout;
 import net.runelite.client.ui.MultiplexingPluginPanel;
 import net.runelite.client.ui.PluginPanel;
-import net.runelite.client.util.Text;
+import net.unethicalite.api.plugins.LoopedPlugin;
 import net.unethicalite.client.Static;
 
 import javax.inject.Inject;
@@ -23,8 +20,6 @@ import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,15 +28,12 @@ public class ScriptsPluginsListPanel extends PluginPanel {
 
     private final ConfigManager configManager;
     private final PluginManager pluginManager;
-
-
+    private final List<Plugin> pluginList;
     private final EventBus eventBus;
-
     private final Provider<ScriptsConfigPanel> configPanelProvider;
 
     @Getter
     private final MultiplexingPluginPanel muxer;
-
     private PluginPanel mainPanel;
 
     @Inject
@@ -58,6 +50,8 @@ public class ScriptsPluginsListPanel extends PluginPanel {
         this.pluginManager = pluginManager;
         this.configPanelProvider = configPanelProvider;
         this.eventBus = eventBus;
+        this.pluginList = pluginManager.getPlugins().stream().filter(x -> x instanceof LoopedPlugin).collect(Collectors.toList());
+
         muxer = new MultiplexingPluginPanel(this)
         {
             @Override
@@ -78,10 +72,13 @@ public class ScriptsPluginsListPanel extends PluginPanel {
         mainPanel.setLayout(new DynamicGridLayout(0, 1, 0, 5));
         mainPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JButton button = new JButton("Fighter");
-        button.addActionListener(e -> openConfigurationPanel(getDesc()));
+        for (Plugin plugin : pluginList)
+        {
+            JButton button = new JButton(plugin.getName());
+            button.addActionListener(e -> openConfigurationPanel(makeDesc(plugin)));
+            mainPanel.add(button);
+        }
 
-        mainPanel.add(button, BorderLayout.CENTER);
         add(mainPanel,BorderLayout.CENTER);
 
     }
@@ -89,6 +86,18 @@ public class ScriptsPluginsListPanel extends PluginPanel {
         ScriptsConfigPanel panel = configPanelProvider.get();
         panel.init(plugin);
         muxer.pushState(panel);
+    }
+
+    void startPlugin(PluginConfigurationDescriptor cd) throws PluginInstantiationException {
+        configManager.syncProperties(cd.getConfigDescriptor().getGroup().value());
+        pluginManager.setPluginEnabled(cd.getPlugin(), true);
+        pluginManager.startPlugin(cd.getPlugin());
+    }
+
+    void stopPlugin(PluginConfigurationDescriptor cd) throws PluginInstantiationException {
+        configManager.syncProperties(cd.getConfigDescriptor().getGroup().value());
+        pluginManager.setPluginEnabled(cd.getPlugin(), false);
+        pluginManager.startPlugin(cd.getPlugin());
     }
 
     PluginConfigurationDescriptor getDesc() {
