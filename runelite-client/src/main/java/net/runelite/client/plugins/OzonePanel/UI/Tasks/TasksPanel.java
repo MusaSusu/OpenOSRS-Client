@@ -1,20 +1,25 @@
-package net.runelite.client.plugins.OzonePanel.UI;
+package net.runelite.client.plugins.OzonePanel.UI.Tasks;
 
 import net.miginfocom.swing.MigLayout;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.OzonePanel.MusaConfig;
+import net.runelite.client.plugins.OzonePanel.UI.QuestsPanelContainer;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.PluginPanel;
 import net.runelite.client.ui.components.shadowlabel.JShadowedLabel;
 import net.runelite.client.util.SwingUtil;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-public class TasksPanel extends QuestsPanelContainer{
+@Singleton
+public class TasksPanel extends QuestsPanelContainer {
 
+    @Inject
     public TasksPanel(MusaConfig config, ConfigManager configManager) {
         super("Tasks",config, configManager);
     }
