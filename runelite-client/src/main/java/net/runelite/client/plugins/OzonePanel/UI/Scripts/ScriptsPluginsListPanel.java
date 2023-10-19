@@ -89,7 +89,6 @@ public class ScriptsPluginsListPanel extends PluginPanel {
         ScriptsConfigPanel panel = configPanelProvider.get();
         panel.init(plugin);
         muxer.pushState(panel);
-        System.out.println(muxer.getcurrent());
     }
 
     PluginConfigurationDescriptor getDesc() {

@@ -8,12 +8,7 @@ import com.google.common.primitives.Ints;
 import net.runelite.api.events.ConfigButtonClicked;
 import net.runelite.client.config.*;
 import net.runelite.client.config.Button;
-import net.runelite.client.eventbus.EventBus;
-import net.runelite.client.externalplugins.ExternalPluginManager;
-import net.runelite.client.plugins.OPRSExternalPluginManager;
-import net.runelite.client.plugins.Plugin;
-import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.plugins.PluginManager;
+import net.runelite.client.plugins.*;
 import net.runelite.client.plugins.config.*;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.DynamicGridLayout;
@@ -21,13 +16,11 @@ import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.PluginPanel;
 import net.runelite.client.ui.components.ComboBoxListRenderer;
 import net.runelite.client.ui.components.ToggleButton;
-import net.runelite.client.ui.components.colorpicker.ColorPickerManager;
 import net.runelite.client.ui.components.colorpicker.RuneliteColorPicker;
 import net.runelite.client.util.*;
 import net.unethicalite.client.Static;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -72,8 +65,8 @@ public class ScriptsConfigPanel extends PluginPanel {
         SECTION_RETRACT_ICON_HOVER = new ImageIcon(ImageUtil.alphaOffset(sectionExpandIcon, -100));
     }
     private final ConfigManager configManager;
-
     private final ScriptsPluginsListPanel pluginList;
+    PluginManager pluginManager;
     private JPanel mainPanel;
     private final ToggleButton pluginToggle;
     private final JLabel title;
@@ -88,12 +81,14 @@ public class ScriptsConfigPanel extends PluginPanel {
 
     @Inject
     private ScriptsConfigPanel(ScriptsPluginsListPanel pluginList,
-                               ConfigManager configManager)
+                               ConfigManager configManager,
+                               PluginManager pluginManager)
     {
         super(false);
 
         this.configManager = configManager;
         this.pluginList = pluginList;
+        this.pluginManager = pluginManager;
 
         setLayout(new BorderLayout());
         setBackground(ColorScheme.DARK_GRAY_COLOR);
@@ -135,8 +130,8 @@ public class ScriptsConfigPanel extends PluginPanel {
                         .compare(a.name(), b.name())
                         .result());
 
-        ConfigDescriptor cd = openConfigurationPanel(); // replace with variable plugin
-        configManager.setOzoneProperties(cd.getGroup().toString());
+        ConfigDescriptor cd = pluginConfig.getConfigDescriptor(); // replace with variable plugin
+        configManager.setOzoneProperties(cd.getGroup().value());
 
         for (ConfigSectionDescriptor csd : cd.getSections())
         {
@@ -409,20 +404,27 @@ public class ScriptsConfigPanel extends PluginPanel {
         }
 
         PluginListItem.addLabelPopupMenu(title, pluginConfig.createSupportMenuItem(), uninstallItem);
-
+        */
         if (pluginConfig.getPlugin() != null)
         {
-            pluginToggle.setConflicts(pluginConfig.getConflicts());
             pluginToggle.setSelected(pluginManager.isPluginEnabled(pluginConfig.getPlugin()));
             pluginToggle.addItemListener(i ->
             {
                 if (pluginToggle.isSelected())
                 {
-                    pluginList.startPlugin(pluginConfig.getPlugin());
+                    try {
+                        startPlugin();
+                    } catch (PluginInstantiationException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
                 else
                 {
-                    pluginList.stopPlugin(pluginConfig.getPlugin());
+                    try {
+                        stopPlugin();
+                    } catch (PluginInstantiationException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
         }
@@ -430,7 +432,6 @@ public class ScriptsConfigPanel extends PluginPanel {
         {
             pluginToggle.setVisible(false);
         }
-         */
         rebuild(false);
     }
 
@@ -914,7 +915,7 @@ public class ScriptsConfigPanel extends PluginPanel {
     {
         boolean rebuild = false;
 
-        ConfigDescriptor cd = openConfigurationPanel();
+        ConfigDescriptor cd = pluginConfig.getConfigDescriptor();
 
         if (component instanceof JCheckBox)
         {
@@ -1081,7 +1082,7 @@ public class ScriptsConfigPanel extends PluginPanel {
 
     private boolean shouldBeHidden(ConfigItemDescriptor cid)
     {
-        ConfigDescriptor cd = openConfigurationPanel();
+        ConfigDescriptor cd = pluginConfig.getConfigDescriptor();
 
         boolean unhide = cid.getItem().hidden();
         boolean hide = !cid.getItem().hide().isEmpty();
@@ -1144,6 +1145,17 @@ public class ScriptsConfigPanel extends PluginPanel {
         return true;
     }
 
+    private void startPlugin() throws PluginInstantiationException {
+        configManager.syncProperties(this.pluginConfig.getConfigDescriptor().getGroup().value());
+        pluginManager.setPluginEnabled(pluginConfig.getPlugin(), true);
+        pluginManager.startPlugin(pluginConfig.getPlugin());
+    }
+
+    private void stopPlugin() throws PluginInstantiationException {
+        configManager.syncProperties(this.pluginConfig.getConfigDescriptor().getGroup().value());
+        pluginManager.setPluginEnabled(pluginConfig.getPlugin(), false);
+        pluginManager.stopPlugin(pluginConfig.getPlugin());
+    }
 
     ConfigDescriptor openConfigurationPanel()
     {
