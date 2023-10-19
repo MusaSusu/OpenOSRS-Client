@@ -11,6 +11,7 @@ public class class202 extends DualNode {
 	@ObfuscatedSignature(
 		descriptor = "Llr;"
 	)
+	@Export("field2026")
 	static EvictingDualNodeHashTable field2026;
 	@ObfuscatedName("ch")
 	@ObfuscatedGetter(
@@ -74,7 +75,7 @@ public class class202 extends DualNode {
 			var5 = new ArchiveDisk(var0, JagexCache.JagexCache_dat2File, UserComparator8.JagexCache_idxFiles[var0], 1000000);
 		}
 
-		return new Archive(var5, UserComparator10.field1480, class59.field452, var0, var1, var2, var3, var4, false);
+		return new Archive(var5, UserComparator10.masterDisk, class59.field452, var0, var1, var2, var3, var4, false);
 	}
 
 	@ObfuscatedName("is")

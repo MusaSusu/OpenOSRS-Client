@@ -5,5 +5,5 @@ import lombok.Value;
 @Value
 public class LoginStateChanged
 {
-	int index;
+	int state;
 }

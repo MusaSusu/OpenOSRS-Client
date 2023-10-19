@@ -2504,6 +2504,8 @@ public interface Client extends OAuthApi, GameEngine
 
 	void posToCameraAngle(int var0, int var1);
 
+	Rasterizer getRasterizer();
+
 	/*
 	 * Unethical
 	 */
@@ -2678,5 +2680,13 @@ public interface Client extends OAuthApi, GameEngine
 	boolean isMembersWorld();
 
 	void setWorldList(World[] worlds);
+
+	String getSessionId();
+
+	void setSessionId(String sessionId);
+
+	String getCharacterId();
+
+	void setCharacterId(String characterId);
 
 }

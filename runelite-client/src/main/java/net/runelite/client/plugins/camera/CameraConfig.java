@@ -124,21 +124,10 @@ public interface CameraConfig extends Config
 	}
 
 	@ConfigItem(
-		keyName = "compassLookPreservePitch",
-		name = "Preserve pitch on compass look",
-		description = "Preserves the current pitch value (vertical angle) when using the compass look options.",
-		position = 7
-	)
-	default boolean compassLookPreservePitch()
-	{
-		return false;
-	}
-
-	@ConfigItem(
 		keyName = "preserveYaw",
 		name = "Preserve yaw on world hop",
 		description = "Preserves the camera yaw (left/right) when world hopping.",
-		position = 8
+		position = 7
 	)
 	default boolean preserveYaw()
 	{
@@ -150,7 +139,7 @@ public interface CameraConfig extends Config
 		keyName = "rightClickMovesCamera",
 		name = "Right click moves camera",
 		description = "Remaps right click to middle mouse click",
-		position = 7,
+		position = 8,
 		section = mouseSettingsSection
 	)
 	default boolean rightClickMovesCamera()
@@ -162,7 +151,7 @@ public interface CameraConfig extends Config
 		keyName = "rightClickObjects",
 		name = "Right click objects",
 		description = "Right clicking objects opens the menu when 'Right click moves camera' is on",
-		position = 8,
+		position = 9,
 		section = mouseSettingsSection
 	)
 	default boolean rightClickObjects()
@@ -171,10 +160,22 @@ public interface CameraConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "rightClickExamine",
+		name = "Right click examine",
+		description = "Right clicking examinable objects opens the menu when 'Right click moves camera' is on",
+		position = 10,
+		section = mouseSettingsSection
+	)
+	default boolean rightClickExamine()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 		keyName = "middleClickMenu",
 		name = "Middle-button opens menu",
 		description = "Remaps middle mouse click to right click",
-		position = 9,
+		position = 11,
 		section = mouseSettingsSection
 	)
 	default boolean middleClickMenu()
