@@ -6,6 +6,8 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.plugins.OzonePanel.UI.MusaPanelRepo;
+import net.runelite.client.plugins.OzonePanel.UI.Scripts.ScriptsConfigPanel;
+import net.runelite.client.plugins.OzonePanel.UI.Scripts.ScriptsPluginsListPanel;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
@@ -13,6 +15,7 @@ import net.runelite.client.util.ImageUtil;
 import net.unethicalite.api.plugins.SettingsPlugin;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.ExecutorService;
 
@@ -42,6 +45,9 @@ public class MusaPlugin extends SettingsPlugin
     @Inject
     private Client client;
 
+    @Inject
+    private Provider<MusaPanelRepo> MusaProvider;
+
     private MusaPanelRepo MusaPanel;
     private NavigationButton navButton;
 
@@ -49,7 +55,7 @@ public class MusaPlugin extends SettingsPlugin
     protected void startUp() throws Exception
     {
 
-        MusaPanel = new MusaPanelRepo(client,config,configManager);
+        MusaPanel = MusaProvider.get();
 
         eventBus.register(MusaPanel);
 

@@ -8,20 +8,20 @@ import net.runelite.client.plugins.PluginInstantiationException;
 import net.runelite.client.util.Text;
 import net.unethicalite.client.Static;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+@Singleton
 public class QuestsPanel extends QuestsPanelContainer {
+    @Inject
     public QuestsPanel(MusaConfig config, ConfigManager configManager) {
         super("Quests", config, configManager);
-    }
 
-    @Override
-    protected void rebuild() {
-        removeAll();
-
+        setLayout(new MigLayout());
         JPanel status = new JPanel(new MigLayout());
         status.add(add(createTextSection("Quest Running:")));
         JLabel currentQuest = new JLabel("None");
@@ -30,6 +30,10 @@ public class QuestsPanel extends QuestsPanelContainer {
         add(createComboBoxSection("Quest", "Quest", QuestEnum.class), "span,grow");
         add(createStartButton(currentQuest));
         add(createStopButton(currentQuest));
+    }
+
+    @Override
+    protected void rebuild() {
     }
 
     protected JPanel createStartButton(JLabel label) {
