@@ -305,7 +305,6 @@ public class PluginListPanel extends PluginPanel
 		panel.init(plugin);
 		muxer.pushState(this);
 		muxer.pushState(panel);
-		System.out.println(muxer.getcurrent());
 	}
 
 	void startPlugin(Plugin plugin)
