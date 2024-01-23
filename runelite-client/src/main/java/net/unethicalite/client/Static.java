@@ -1,7 +1,5 @@
 package net.unethicalite.client;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import lombok.Getter;
 import net.runelite.api.Client;
 import net.runelite.api.packets.ClientPacket;
@@ -15,6 +13,7 @@ import net.runelite.client.game.SpriteManager;
 import net.runelite.client.game.WorldService;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.PluginManager;
+import net.runelite.client.plugins.OzonePanel.MusaConfig;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.unethicalite.api.movement.pathfinder.CollisionMap;
@@ -22,14 +21,12 @@ import net.unethicalite.api.movement.pathfinder.GlobalCollisionMap;
 import net.unethicalite.api.script.paint.Paint;
 import net.unethicalite.client.config.UnethicaliteConfig;
 import net.unethicalite.client.devtools.EntityRenderer;
-import net.unethicalite.client.managers.DefinitionManager;
-import net.unethicalite.client.managers.InventoryManager;
-import net.unethicalite.client.managers.NativeInputManager;
-import net.unethicalite.client.managers.NeverLogManager;
-import net.unethicalite.client.managers.QuestManager;
-import net.unethicalite.client.managers.RegionManager;
-import net.unethicalite.client.managers.SettingsManager;
+import net.unethicalite.client.managers.*;
+import net.unethicalite.client.managers.interaction.InteractionHandler;
 import net.unethicalite.client.managers.interaction.InteractionManager;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class Static
@@ -91,6 +88,14 @@ public class Static
 	@Inject
 	@Getter
 	private static InteractionManager interactionManager;
+
+	@Inject
+	@Getter
+	private static InteractionHandler interactionHandler;
+
+	@Inject
+	@Getter
+	private static MusaConfig musaConfig;
 
 	@Inject
 	@Getter

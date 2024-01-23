@@ -71,6 +71,12 @@ public abstract class HClientMixin implements RSClient
 		}
 	}
 
+	@Inject
+	public boolean[][] getVisibleTiles()
+	{
+		return client.getVisibilityMaps()[(client.getCameraPitch() - 128) / 32][client.getCameraYaw() / 64];
+	}
+
 	@Copy("drawModelComponents")
 	@Replace("drawModelComponents")
 	static void copy$drawModelComponents(Widget[] var0, int var1)

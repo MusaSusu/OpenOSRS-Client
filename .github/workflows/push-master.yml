@@ -37,18 +37,6 @@ jobs:
       - name: Bootstrap
         run: ./gradlew bootstrapStable -x test -x checkstyleMain --console=plain
 
-      - name: Push to hosting
-        run: |
-          git clone https://github.com/jbx5/devious-hosting.git
-          cp -r ./runelite-client/build/bootstrap/. ./devious-hosting
-          cd devious-hosting
-          
-          git config --global user.email "113217895+jbx5@users.noreply.github.com"
-          git config --global user.name "Github Actions"
-          git add -A
-          git commit -m 'Auto release - Client (Stable)'
-          git push https://jbx5:${{ secrets.REPO_PAT }}@github.com/jbx5/devious-hosting.git master
-
   checkstyleMain:
     name: Checkstyle main
     runs-on: ubuntu-latest
@@ -71,28 +59,3 @@ jobs:
         run: ./gradlew assemble --console=plain
       - name: Checking code conventions
         run: ./gradlew checkstyleMain --console=plain
-
-  deploy:
-    name: Publish Maven package
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-
-      - name: Publish to Devious Client Maven Repo
-        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
-        with:
-          arguments: runelite-client:publish runelite-api:publish http-api:publish runescape-api:publish cache:publish injection-annotations:publish deobfuscator:publish -x test
-        env:
-          REPO_URL: ${{ secrets.REPO_RELEASES_URL }}
-          REPO_USERNAME: ${{ secrets.REPO_USERNAME }}
-          REPO_PASSWORD: ${{ secrets.REPO_PASSWORD }}

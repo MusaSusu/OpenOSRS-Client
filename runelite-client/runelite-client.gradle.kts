@@ -88,6 +88,7 @@ dependencies {
     implementation(group = "org.pf4j", name = "pf4j", version = "3.6.0") {
         exclude(group = "org.slf4j")
     }
+    implementation(group = "org.apache.commons", name = "commons-math3", version = "3.6.1")
     implementation(group = "org.pf4j", name = "pf4j-update", version = "2.3.0")
     // implementation(group = "com.google.archivepatcher", name = "archive-patch-applier", version= "1.0.4")
     implementation(group = "net.runelite.gluegen", name = "gluegen-rt", version = "2.4.0-rc-20220318")

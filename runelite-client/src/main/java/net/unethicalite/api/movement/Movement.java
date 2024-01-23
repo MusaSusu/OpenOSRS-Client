@@ -1,18 +1,13 @@
 package net.unethicalite.api.movement;
 
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Client;
-import net.runelite.api.Locatable;
-import net.runelite.api.MenuAction;
-import net.runelite.api.Perspective;
-import net.runelite.api.Player;
-import net.runelite.api.Point;
-import net.runelite.api.Tile;
+import net.runelite.api.*;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
+import net.unethicalite.api.commons.Rand;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.game.Vars;
 import net.unethicalite.api.movement.pathfinder.Walker;
@@ -20,6 +15,7 @@ import net.unethicalite.api.movement.pathfinder.model.BankLocation;
 import net.unethicalite.api.scene.Tiles;
 import net.unethicalite.api.widgets.Widgets;
 import net.unethicalite.client.Static;
+import net.unethicalite.client.managers.interaction.InteractionHandler;
 
 import java.util.Comparator;
 import java.util.List;
@@ -61,8 +57,9 @@ public class Movement
 				&& destination.distanceTo(local) > 4;
 	}
 
-	public static void walk(WorldPoint worldPoint)
+	public static void walk(WorldPoint worldPoint, WorldPoint hoverPoint)
 	{
+		InteractionHandler interactionHandler = Static.getInteractionHandler();
 		Client client = Static.getClient();
 		Player local = client.getLocalPlayer();
 		if (local == null)
@@ -91,18 +88,47 @@ public class Movement
 
 		int sceneX = walkPoint.getX() - client.getBaseX();
 		int sceneY = walkPoint.getY() - client.getBaseY();
+
+		double angle = CameraController.angleFromLocal(LocalPoint.fromScene(sceneX, sceneY));
+		CameraController.alignToNorth(angle);
+
 		Point canv = Perspective.localToCanvas(client, LocalPoint.fromScene(sceneX, sceneY), client.getPlane());
 		int x = canv != null ? canv.getX() : -1;
 		int y = canv != null ? canv.getY() : -1;
 
-		client.interact(
+		int sceneX1 = hoverPoint.getX() - client.getBaseX();
+		int sceneY1 = hoverPoint.getY() - client.getBaseY();
+		Point canv1 = Perspective.localToCanvas(client, LocalPoint.fromScene(sceneX1, sceneY1), client.getPlane());
+		int x1 = canv != null ? canv1.getX() : -1;
+		int y1 = canv != null ? canv1.getY() : -1;
+
+		if (Rand.nextInt(0,15) < 3)
+		{
+			client.interact(
+					0,
+					MenuAction.WALK.getId(),
+					sceneX,
+					sceneY,
+					x,
+					y
+			);
+		}
+		interactionHandler.combineInteract(
 				0,
 				MenuAction.WALK.getId(),
 				sceneX,
 				sceneY,
 				x,
-				y
-		);
+				y,
+				null,
+				x1,
+				y1
+				);
+	}
+
+	public static void walk(WorldPoint worldPoint)
+	{
+		walk(worldPoint,worldPoint);
 	}
 
 	public static boolean walkTo(WorldArea worldArea)
@@ -110,10 +136,7 @@ public class Movement
 		return Walker.walkTo(worldArea);
 	}
 
-	public static void walk(Locatable locatable)
-	{
-		walk(locatable.getWorldLocation());
-	}
+	//public static void walk(Locatable locatable) {walk(locatable.getWorldLocation());}
 
 	public static boolean walkTo(WorldPoint worldPoint)
 	{

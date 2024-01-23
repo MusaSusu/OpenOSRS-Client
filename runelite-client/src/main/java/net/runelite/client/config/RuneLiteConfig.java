@@ -24,18 +24,18 @@
  */
 package net.runelite.client.config;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import net.runelite.api.Constants;
 import net.runelite.client.Notifier;
 import net.runelite.client.ui.ContainableFrame;
 import net.runelite.client.ui.overlay.components.ComponentConstants;
 import net.runelite.client.util.OSType;
 
+import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+
 @ConfigGroup(RuneLiteConfig.GROUP_NAME)
-public interface RuneLiteConfig extends Config
+public interface   RuneLiteConfig extends Config
 {
 	String GROUP_NAME = "runelite";
 

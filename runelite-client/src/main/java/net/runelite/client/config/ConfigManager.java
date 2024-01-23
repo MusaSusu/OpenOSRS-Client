@@ -143,6 +143,8 @@ public class ConfigManager
 
 	private Properties properties = new Properties();
 
+	private Properties ozonePanelProperties = new Properties();
+
 	// null => we need to make a new profile
 	@Nullable
 	private String rsProfileKey;
@@ -251,6 +253,80 @@ public class ConfigManager
 		{
 			log.warn("Unable to update configuration on disk", ex);
 		}
+	}
+
+	public void setOzoneProperties(String prefix)
+	{
+		if (ozonePanelProperties.keySet().stream().anyMatch(k-> k.toString().startsWith(prefix)))
+		{
+			return;
+		}
+		List<Object> allKeys = properties.keySet().stream()
+				.filter(k -> k.toString().startsWith(prefix))
+				.collect(Collectors.toList());
+		for (Object wholeKey : allKeys)
+		{
+			this.ozonePanelProperties.put(wholeKey,properties.get(wholeKey));
+		}
+	}
+
+	public void syncProperties(String prefix)
+	{
+		List<Object> allKeys = ozonePanelProperties.keySet().stream()
+				.filter(k -> k.toString().startsWith(prefix))
+				.collect(Collectors.toList());
+		for (Object wholeKey : allKeys)
+		{
+			this.properties.put(wholeKey,ozonePanelProperties.get(wholeKey));
+		}
+	}
+
+	public String getOzoneConfiguration(String groupName,String key)
+	{
+		return properties.getProperty(getWholeKey(groupName, null, key));
+	}
+
+	public <T> T getOzoneConfiguration(String groupName, String key, Type type)
+	{
+		String value = getOzoneConfiguration(groupName, key);
+		if (!Strings.isNullOrEmpty(value))
+		{
+			try
+			{
+				return (T) stringToObject(value, type);
+			}
+			catch (Exception e)
+			{
+				log.warn("Unable to unmarshal {} ", getWholeKey(groupName,null, key), e);
+			}
+		}
+		return null;
+	}
+
+	public void setOzoneConfiguration(String groupName, String key, @NonNull String value)
+	{
+		if (Strings.isNullOrEmpty(groupName) || Strings.isNullOrEmpty(key) || key.indexOf(':') != -1 || key.startsWith("$"))
+		{
+			throw new IllegalArgumentException();
+		}
+
+		assert !key.startsWith(RSPROFILE_GROUP + ".");
+		String wholeKey = getWholeKey(groupName, null, key);
+		String oldValue;
+		synchronized (this)
+		{
+			oldValue = (String) ozonePanelProperties.setProperty(wholeKey, value);
+		}
+
+		if (Objects.equals(oldValue, value))
+		{
+			return;
+		}
+	}
+
+	public <T> void setOzoneConfiguration(String groupName, String key, T value)
+	{
+		setOzoneConfiguration(groupName, key, objectToString(value));
 	}
 
 	private void swapProperties(Properties newProperties, boolean saveToServer)

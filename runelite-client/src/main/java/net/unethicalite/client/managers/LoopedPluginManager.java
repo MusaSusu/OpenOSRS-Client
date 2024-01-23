@@ -6,6 +6,7 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.PluginChanged;
+import net.runelite.client.plugins.OzonePanel.UI.Scripts.ScriptsPanel;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.config.PluginConfigurationDescriptor;
 import net.runelite.client.plugins.config.PluginListPanel;
@@ -32,6 +33,9 @@ public class LoopedPluginManager
 
 	@Inject
 	private Provider<PluginListPanel> pluginListPanelProvider;
+
+	@Inject
+	private Provider<ScriptsPanel> ScriptsPanelProvider;
 
 	@Inject
 	private Client client;
@@ -149,6 +153,11 @@ public class LoopedPluginManager
 			if (plugin instanceof LoopedPlugin)
 			{
 				submit(plugin);
+				ScriptsPanel scriptsPanel = ScriptsPanelProvider.get();
+				if (isPluginRegistered())
+				{
+					scriptsPanel.updateScript(plugin.getName());
+				}
 			}
 		}
 		else
@@ -156,6 +165,8 @@ public class LoopedPluginManager
 			if (plugin instanceof LoopedPlugin && plugin == this.loopedPlugin)
 			{
 				unregister();
+				ScriptsPanel scriptsPanel = ScriptsPanelProvider.get();
+				scriptsPanel.updateScript("None");
 			}
 		}
 	}
