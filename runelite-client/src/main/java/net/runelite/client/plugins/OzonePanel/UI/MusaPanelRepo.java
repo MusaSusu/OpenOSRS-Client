@@ -1,6 +1,7 @@
 package net.runelite.client.plugins.OzonePanel.UI;
 
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.client.config.ConfigManager;
@@ -16,16 +17,12 @@ import net.runelite.client.ui.components.materialtabs.MaterialTabGroup;
 import net.unethicalite.client.config.UnethicaliteConfig;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
-@Singleton
 public class MusaPanelRepo extends PluginPanel
 {
     private final List<QuestsPanelContainer> containers = new ArrayList<>();
@@ -33,27 +30,23 @@ public class MusaPanelRepo extends PluginPanel
     private final JPanel display = new JPanel();
     private final MaterialTabGroup tabGroup = new MaterialTabGroup(display);
 
-    private final QuestsPanel questsPanel;
     private final TasksPanel tasksPanel;
-    private final ScriptsPanel scriptsPanel;
-
+    private final QuestsPanel questsPanel;
     @Inject
-    public MusaPanelRepo(Client client,
-                         MusaConfig config,
-                         ConfigManager configManager,
-                         TasksPanel tasksPanel,
-                         QuestsPanel questsPanel,
-                         ScriptsPanel scriptsPanel
+    private MusaPanelRepo(MusaConfig config,
+                          ConfigManager configManager,
+                          TasksPanel tasksPanel,
+                          QuestsPanel questsPanel
     )
     {
         setLayout(new BorderLayout());
         tabGroup.setBorder(new EmptyBorder(5, 0, 0, 0));
 
-        this.scriptsPanel = scriptsPanel;
+        //this.scriptsPanel = scriptsPanel;
         this.questsPanel = questsPanel;
         this.tasksPanel = tasksPanel;
 
-        MaterialTab scriptsTab = new MaterialTab("Scripts", tabGroup, scriptsPanel);
+        //MaterialTab scriptsTab = new MaterialTab("Scripts", tabGroup, scriptsPanel);
         MaterialTab questsTab = new MaterialTab("Quests", tabGroup, questsPanel);
         MaterialTab tasksTab = new MaterialTab("Tasks", tabGroup, tasksPanel);
 
@@ -62,7 +55,7 @@ public class MusaPanelRepo extends PluginPanel
         //containers.add(questsPanel);
 
         tabGroup.addTab(tasksTab);
-        tabGroup.addTab(scriptsTab);
+        //tabGroup.addTab(scriptsTab);
         tabGroup.addTab(questsTab);
 
         add(tabGroup, BorderLayout.NORTH);

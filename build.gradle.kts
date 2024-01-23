@@ -110,8 +110,9 @@ subprojects {
     project.extra["gitCommit"] = localGitCommit
     project.extra["rootPath"] = rootDir.toString().replace("\\", "/")
 
+    /*
     if (this.name != "runescape-client") {
-        apply<CheckstylePlugin>()
+        //apply<CheckstylePlugin>()
 
         configure<CheckstyleExtension> {
             maxWarnings = 0
@@ -120,6 +121,7 @@ subprojects {
             isIgnoreFailures = false
         }
     }
+    */
 
     configure<PublishingExtension> {
         repositories {

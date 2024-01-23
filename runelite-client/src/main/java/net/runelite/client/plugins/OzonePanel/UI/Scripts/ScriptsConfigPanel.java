@@ -14,7 +14,6 @@ import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.DynamicGridLayout;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.PluginPanel;
-import net.runelite.client.ui.components.ComboBoxListRenderer;
 import net.runelite.client.ui.components.ToggleButton;
 import net.runelite.client.ui.components.colorpicker.RuneliteColorPicker;
 import net.runelite.client.util.*;
@@ -75,7 +74,7 @@ public class ScriptsConfigPanel extends PluginPanel {
 
     private static final Map<ConfigSectionDescriptor, Boolean> sectionExpandStates = new HashMap<>();
 
-    private final ListCellRenderer<Enum<?>> listCellRenderer = new ComboBoxListRenderer<>();
+    //private final ListCellRenderer<Enum<?>> listCellRenderer = new ComboBoxListRenderer<>();
 
     private boolean skipRebuild = true;
 
@@ -469,7 +468,7 @@ public class ScriptsConfigPanel extends PluginPanel {
 
     private JCheckBox createCheckbox(ConfigDescriptor cd, ConfigItemDescriptor cid)
     {
-        JCheckBox checkbox = new ToggleButton();
+        JCheckBox checkbox = new JCheckBox();
         checkbox.setPreferredSize(new Dimension(26, 25));
         checkbox.setSelected(Boolean.parseBoolean(configManager.getOzoneConfiguration(cd.getGroup().value(), cid.getItem().keyName())));
         checkbox.addActionListener(ae -> changeConfiguration(checkbox, cd, cid));
@@ -717,7 +716,6 @@ public class ScriptsConfigPanel extends PluginPanel {
         // set renderer prior to calling box.getPreferredSize(), since it will invoke the renderer
         // to build components for each combobox element in order to compute the display size of the
         // combobox
-        box.setRenderer(listCellRenderer);
         box.setPreferredSize(new Dimension(box.getPreferredSize().width, 25));
         box.setForeground(Color.WHITE);
         box.setFocusable(false);

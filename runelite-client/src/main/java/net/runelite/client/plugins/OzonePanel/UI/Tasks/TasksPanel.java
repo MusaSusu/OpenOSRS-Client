@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.miginfocom.swing.MigLayout;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.OzonePanel.MusaConfig;
+import net.runelite.client.plugins.OzonePanel.UI.MusaPanelRepo;
 import net.runelite.client.plugins.OzonePanel.UI.QuestsPanelContainer;
 import net.runelite.client.plugins.config.FixedWidthPanel;
 import net.runelite.client.ui.*;
@@ -16,21 +17,16 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+
 @Singleton
-public class TasksPanel extends PluginPanel {
+public class TasksPanel extends JPanel {
 
-    @Getter
-    private final MultiplexingPluginPanel muxer;
-    private FixedWidthPanel mainPanel;
-
-
+    private final FixedWidthPanel mainPanel = new FixedWidthPanel();
     @Inject
-    public TasksPanel(MusaConfig config,
-                      ConfigManager configManager)
+    private TasksPanel(MusaConfig config,
+                      ConfigManager configManager
+    )
     {
-        super(false);
-
-        muxer = new MultiplexingPluginPanel(this);
 
         setLayout(new BorderLayout());
 
