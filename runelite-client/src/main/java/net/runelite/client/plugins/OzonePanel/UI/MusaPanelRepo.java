@@ -1,15 +1,9 @@
 package net.runelite.client.plugins.OzonePanel.UI;
 
-
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Client;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.OzonePanel.MusaConfig;
-import net.runelite.client.plugins.OzonePanel.UI.Scripts.ScriptsPanel;
-import net.runelite.client.plugins.OzonePanel.UI.Scripts.ScriptsPluginsListPanel;
 import net.runelite.client.plugins.OzonePanel.UI.Tasks.TasksPanel;
 import net.runelite.client.ui.PluginPanel;
 import net.runelite.client.ui.components.materialtabs.MaterialTab;
