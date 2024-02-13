@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Weird Gloop <admin@weirdgloop.org>
+ * Copyright (c) 2018, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,16 +22,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.crowdsourcing.dialogue;
+package net.runelite.client.plugins.cannon;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import net.runelite.client.ui.overlay.infobox.InfoBox;
 
-@Data
-@AllArgsConstructor
-public class DoubleSpriteTextData
+class CannonCounter extends InfoBox
 {
-	private String message;
-	private int itemId1;
-	private int itemId2;
+	private final CannonPlugin plugin;
+
+	CannonCounter(BufferedImage img, CannonPlugin plugin)
+	{
+		super(img, plugin);
+		this.plugin = plugin;
+	}
+
+	@Override
+	public String getText()
+	{
+		return String.valueOf(plugin.getCballsLeft());
+	}
+
+	@Override
+	public Color getTextColor()
+	{
+		return plugin.getStateColor();
+	}
 }

@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2018, Woox <https://github.com/wooxsolo>
+ * Copyright (c) 2018, Cameron <https://github.com/noremac201>
+ * Copyright (c) 2018, Jacob M <https://github.com/jacoblairm>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,41 +23,42 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.npcunaggroarea;
+package net.runelite.client.plugins.barbarianassault;
 
-import com.google.inject.Inject;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import net.runelite.client.ui.overlay.OverlayPanel;
-import net.runelite.client.ui.overlay.OverlayPosition;
-import net.runelite.client.ui.overlay.components.LineComponent;
+import net.runelite.client.config.Config;
+import net.runelite.client.config.ConfigGroup;
+import net.runelite.client.config.ConfigItem;
 
-class NpcAggroAreaNotWorkingOverlay extends OverlayPanel
+@ConfigGroup("barbarianAssault")
+public interface BarbarianAssaultConfig extends Config
 {
-	private final NpcAggroAreaPlugin plugin;
-
-	@Inject
-	private NpcAggroAreaNotWorkingOverlay(NpcAggroAreaPlugin plugin)
+	@ConfigItem(
+		keyName = "showTimer",
+		name = "Show call change timer",
+		description = "Show time to next call change"
+	)
+	default boolean showTimer()
 	{
-		this.plugin = plugin;
-
-		panelComponent.getChildren().add(LineComponent.builder()
-			.left("Unaggressive NPC timers require calibration. Teleport far away or enter a dungeon, then run until this overlay disappears.")
-			.build());
-
-		setPriority(PRIORITY_LOW);
-		setPosition(OverlayPosition.TOP_LEFT);
-		setClearChildren(false);
+		return true;
 	}
 
-	@Override
-	public Dimension render(Graphics2D graphics)
+	@ConfigItem(
+		keyName = "showHealerBars",
+		name = "Show health bars for teammates when healer",
+		description = "Displays team health for healer"
+	)
+	default boolean showHealerBars()
 	{
-		if (plugin.getSafeCenters()[1] != null)
-		{
-			return null;
-		}
+		return true;
+	}
 
-		return super.render(graphics);
+	@ConfigItem(
+		keyName = "waveTimes",
+		name = "Show wave and game duration",
+		description = "Displays wave and game duration"
+	)
+	default boolean waveTimes()
+	{
+		return true;
 	}
 }

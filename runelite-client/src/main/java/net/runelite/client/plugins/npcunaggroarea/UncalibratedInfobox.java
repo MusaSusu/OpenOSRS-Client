@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Weird Gloop <admin@weirdgloop.org>
+ * Copyright (c) 2024, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,16 +22,41 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.crowdsourcing.dialogue;
+package net.runelite.client.plugins.npcunaggroarea;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import net.runelite.api.ChatMessageType;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import net.runelite.client.ui.overlay.infobox.InfoBox;
+import net.runelite.client.ui.overlay.infobox.InfoBoxPriority;
 
-@Data
-@AllArgsConstructor
-public class ChatMessageData
+class UncalibratedInfobox extends InfoBox
 {
-	private final String message;
-	private final ChatMessageType type;
+	private final NpcAggroAreaPlugin plugin;
+
+	public UncalibratedInfobox(BufferedImage image, NpcAggroAreaPlugin plugin)
+	{
+		super(image, plugin);
+		this.plugin = plugin;
+
+		setTooltip("Unaggressive NPC timers require calibration.</br>Teleport far away or enter a dungeon, then run until this infobox disappears.");
+		setPriority(InfoBoxPriority.HIGH);
+	}
+
+	@Override
+	public String getText()
+	{
+		return "?";
+	}
+
+	@Override
+	public Color getTextColor()
+	{
+		return Color.WHITE;
+	}
+
+	@Override
+	public boolean render()
+	{
+		return plugin.getSafeCenters()[1] == null;
+	}
 }

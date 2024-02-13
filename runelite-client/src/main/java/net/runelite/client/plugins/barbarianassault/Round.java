@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Weird Gloop <admin@weirdgloop.org>
+ * Copyright (c) 2018, Cameron <https://github.com/noremac201>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,15 +22,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.crowdsourcing.dialogue;
+package net.runelite.client.plugins.barbarianassault;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import java.time.Duration;
+import java.time.Instant;
+import javax.inject.Inject;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+import static net.runelite.client.util.RSTimeUnit.GAME_TICKS;
 
-@Data
-@AllArgsConstructor
-public class SpriteTextData
+class Round
 {
-	private String message;
-	private int itemId1;
+	private final Instant roundStartTime;
+	@Getter
+	private final Role roundRole;
+	@Getter
+	@Setter
+	private boolean runnersKilled;
+	@Getter
+	@Setter
+	private boolean rangersKilled;
+	@Getter
+	@Setter
+	private boolean healersKilled;
+	@Getter
+	@Setter
+	private boolean fightersKilled;
+
+	@Inject
+	public Round(@NonNull Role role)
+	{
+		this.roundRole = role;
+		this.roundStartTime = Instant.now().plus(Duration.of(2, GAME_TICKS));
+	}
+
+	public int getTimeToChange()
+	{
+		return 30 + ((int) Duration.between(Instant.now(), roundStartTime).getSeconds() % 30);
+	}
 }
