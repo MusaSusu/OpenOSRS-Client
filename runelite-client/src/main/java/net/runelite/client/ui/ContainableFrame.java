@@ -24,8 +24,10 @@
  */
 package net.runelite.client.ui;
 
+import com.formdev.flatlaf.ui.FlatNativeWindowsLibrary;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.IllegalComponentStateException;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -33,12 +35,14 @@ import javax.swing.JFrame;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.util.OSType;
+import net.runelite.client.util.WinUtil;
 
 @Slf4j
 public class ContainableFrame extends JFrame
 {
 	public enum Mode
 	{
+		ALWAYS,
 		RESIZING,
 		NEVER;
 	}
@@ -48,142 +52,92 @@ public class ContainableFrame extends JFrame
 	@Setter
 	private Mode containedInScreen;
 	private boolean rightSideSuction;
-	private boolean boundsOpSet;
 	private boolean scaleMinSize = false;
-
-	@Override
-	@SuppressWarnings("deprecation")
-	public void resize(int width, int height)
-	{
-		reshape(getX(), getY(), width, height);
-	}
-
-	@Override
-	@SuppressWarnings("deprecation")
-	public void move(int x, int y)
-	{
-		reshape(x, y, getWidth(), getHeight());
-	}
-
-	@Override
-	@SuppressWarnings("deprecation")
-	public void reshape(int x, int y, int width, int height)
-	{
-		// Component has stateful behavior so that setLocation can call reshape without
-		// reshape attempting to update it's x/y components.
-		if (boundsOpSet)
-		{
-			super.reshape(x, y, width, height);
-			return;
-		}
-
-		applyChange(x, y, width, height, getX(), getY(), getWidth(), false);
-	}
-
-	@Override
-	public void pack()
-	{
-		try
-		{
-			boundsOpSet = true;
-			super.pack();
-		}
-		finally
-		{
-			boundsOpSet = false;
-		}
-	}
+	private boolean overrideUndecorated;
 
 	// we must use the deprecated variants since that it what Component ultimately delegates to
 	@SuppressWarnings("deprecation")
-	private void applyChange(int x, int y, int width, int height, int oldX, int oldY, int oldWidth, boolean contain)
+	private void applyChange(int wX, int wY, int wWidth, int wHeight, int wOldx, int wOldY, int wOldWidth, boolean contain)
 	{
-		try
+		boolean isSnapped = WinUtil.isWindowArranged(this);
+
+		if ((contain || isSnapped) && !isFullScreen())
 		{
-			boundsOpSet = true;
+			Rectangle cDpyBounds = this.getGraphicsConfiguration().getBounds();
+			Insets insets = this.getInsets();
+			Rectangle cRect = new Rectangle(wX + insets.left, wY + insets.top, wWidth - (insets.left + insets.right), wHeight - (insets.top + insets.bottom));
 
-			if (contain && !isFullScreen())
+			if (rightSideSuction || isSnapped)
 			{
-				Rectangle dpyBounds = this.getGraphicsConfiguration().getBounds();
-				Insets insets = this.getInsets();
-				Rectangle rect = new Rectangle(x + insets.left, y + insets.top, width - (insets.left + insets.right), height - (insets.top + insets.bottom));
-
-				if (rightSideSuction)
-				{
-					// only keep suction while where are near the screen edge
-					rightSideSuction = getBounds().getMaxX() + SCREEN_EDGE_CLOSE_DISTANCE >= dpyBounds.getMaxX();
-				}
-
-				if (rightSideSuction && width < oldWidth)
-				{
-					// shift the window so the right side is near the edge again
-					rect.x += oldWidth - width;
-				}
-
-				if (width > oldWidth
-					&& rect.getMaxX() > dpyBounds.getMaxX()
-					&& oldX + oldWidth + SCREEN_EDGE_CLOSE_DISTANCE > dpyBounds.getMaxX()
-					&& oldX + oldWidth <= dpyBounds.getMaxX())
-				{
-					// attempt to retain the distance between us and the edge when shifting left
-					rect.x -= width - oldWidth;
-				}
-
-				rect.x -= Math.max(0, rect.getMaxX() - dpyBounds.getMaxX());
-				rect.y -= Math.max(0, rect.getMaxY() - dpyBounds.getMaxY());
-
-				// if we are just resizing don't try to move the left side out
-				if (rect.x != oldX + insets.left)
-				{
-					rect.x = Math.max(rect.x, dpyBounds.x);
-				}
-
-				if (rect.y != oldY + insets.top)
-				{
-					rect.y = Math.max(rect.y, dpyBounds.y);
-				}
-
-				if (width > oldWidth && rect.x < x)
-				{
-					// we have shifted the window left to avoid the right side going oob
-					rightSideSuction = true;
-				}
-
-				x = rect.x - insets.left;
-				y = rect.y - insets.top;
-				width = rect.width + insets.left + insets.right;
-				height = rect.height + insets.top + insets.bottom;
+				// only keep suction while where are near the screen edge
+				rightSideSuction = wOldx + wOldWidth - insets.right + SCREEN_EDGE_CLOSE_DISTANCE >= cDpyBounds.getMaxX();
 			}
 
-			boolean xyDifferent = getX() != x || getY() != y;
-			boolean whDifferent = getWidth() != width || getHeight() != height;
+			if (rightSideSuction && wWidth < wOldWidth)
+			{
+				// shift the window so the right side is near the edge again
+				cRect.x += wOldWidth - wWidth;
+			}
 
-			if (xyDifferent && whDifferent)
+			if (wWidth > wOldWidth
+				&& cRect.getMaxX() > cDpyBounds.getMaxX()
+				&& (wOldx + insets.left) + (wOldWidth - (insets.left + insets.right)) + SCREEN_EDGE_CLOSE_DISTANCE > cDpyBounds.getMaxX()
+				&& (wOldx + insets.left) + (wOldWidth - (insets.left + insets.right)) <= cDpyBounds.getMaxX())
 			{
-				super.reshape(x, y, width, height);
+				// attempt to retain the distance between us and the edge when shifting left
+				cRect.x -= wWidth - wOldWidth;
 			}
-			else if (xyDifferent)
+
+			cRect.x -= Math.max(0, cRect.getMaxX() - cDpyBounds.getMaxX());
+			cRect.y -= Math.max(0, cRect.getMaxY() - cDpyBounds.getMaxY());
+
+			// if we are just resizing don't try to move the left side out
+			if (cRect.x != wOldx + insets.left)
 			{
-				super.move(x, y);
+				cRect.x = Math.max(cRect.x, cDpyBounds.x);
 			}
-			else if (whDifferent)
+
+			if (cRect.y != wOldY + insets.top)
 			{
-				super.resize(width, height);
+				cRect.y = Math.max(cRect.y, cDpyBounds.y);
 			}
+
+			if (wWidth > wOldWidth && cRect.x < wOldx + insets.left)
+			{
+				// we have shifted the window left to avoid the right side going oob
+				rightSideSuction = true;
+			}
+
+			wX = cRect.x - insets.left;
+			wY = cRect.y - insets.top;
+			wWidth = cRect.width + insets.left + insets.right;
+			wHeight = cRect.height + insets.top + insets.bottom;
 		}
-		finally
+
+		boolean xyDifferent = getX() != wX || getY() != wY;
+		boolean whDifferent = getWidth() != wWidth || getHeight() != wHeight;
+
+		if (xyDifferent && whDifferent)
 		{
-			boundsOpSet = false;
+			super.reshape(wX, wY, wWidth, wHeight);
+		}
+		else if (xyDifferent)
+		{
+			super.move(wX, wY);
+		}
+		else if (whDifferent)
+		{
+			super.resize(wWidth, wHeight);
 		}
 	}
 
 	/**
 	 * Adjust the frame's size, containing to the screen if {@code Mode.RESIZING} is set
 	 */
-	public void containedSetSize(Dimension size, Dimension oldSize)
+	public void containedSetSize(Dimension size, Rectangle oldBounds)
 	{
 		// accept oldSize from the outside since the min size might have been set, which forces the size to change
-		applyChange(getX(), getY(), size.width, size.height, getX(), getY(), oldSize.width, this.containedInScreen != Mode.NEVER);
+		applyChange(getX(), getY(), size.width, size.height, oldBounds.x, oldBounds.y, oldBounds.width, this.containedInScreen != Mode.NEVER);
 	}
 
 	/**
@@ -248,5 +202,39 @@ public class ContainableFrame extends JFrame
 	private boolean isFullScreen()
 	{
 		return (getExtendedState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH;
+	}
+
+	void updateContainsInScreen()
+	{
+		if (FlatNativeWindowsLibrary.isLoaded())
+		{
+			FlatNativeWindowsLibrary.setContainInScreen(this, containedInScreen == Mode.ALWAYS);
+		}
+	}
+
+	@Override
+	public void setOpacity(float opacity)
+	{
+		// JDK-6993784 requires the frame to be undecorated to apply opacity, but in practice it works on Windows regardless.
+		// Temporarily pretend to be an undecorated frame to satisfy Frame.setOpacity().
+		overrideUndecorated = true;
+		try
+		{
+			super.setOpacity(opacity);
+		}
+		catch (IllegalComponentStateException | UnsupportedOperationException | IllegalArgumentException ex)
+		{
+			log.warn("unable to set opacity {}", opacity, ex);
+		}
+		finally
+		{
+			overrideUndecorated = false;
+		}
+	}
+
+	@Override
+	public boolean isUndecorated()
+	{
+		return overrideUndecorated || super.isUndecorated();
 	}
 }
