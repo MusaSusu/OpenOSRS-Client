@@ -55,7 +55,7 @@ public class MusaPlugin extends SettingsPlugin
     protected void startUp() throws Exception
     {
 
-        MusaPanel = MusaProvider.get();
+        MusaPanel = injector.getInstance(MusaPanelRepo.class);
 
         eventBus.register(MusaPanel);
 

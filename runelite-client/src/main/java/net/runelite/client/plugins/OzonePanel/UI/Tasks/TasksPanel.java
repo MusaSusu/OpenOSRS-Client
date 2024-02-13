@@ -1,12 +1,13 @@
 package net.runelite.client.plugins.OzonePanel.UI.Tasks;
 
+import lombok.Getter;
 import net.miginfocom.swing.MigLayout;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.OzonePanel.MusaConfig;
+import net.runelite.client.plugins.OzonePanel.UI.MusaPanelRepo;
 import net.runelite.client.plugins.OzonePanel.UI.QuestsPanelContainer;
-import net.runelite.client.ui.ColorScheme;
-import net.runelite.client.ui.FontManager;
-import net.runelite.client.ui.PluginPanel;
+import net.runelite.client.plugins.config.FixedWidthPanel;
+import net.runelite.client.ui.*;
 import net.runelite.client.ui.components.shadowlabel.JShadowedLabel;
 import net.runelite.client.util.SwingUtil;
 
@@ -16,30 +17,50 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-@Singleton
-public class TasksPanel extends QuestsPanelContainer {
 
+@Singleton
+public class TasksPanel extends JPanel {
+
+    private final FixedWidthPanel mainPanel = new FixedWidthPanel();
     @Inject
-    public TasksPanel(MusaConfig config, ConfigManager configManager) {
-        super("Tasks",config, configManager);
+    private TasksPanel(MusaConfig config,
+                      ConfigManager configManager
+    )
+    {
+
+        setLayout(new BorderLayout());
+
+        JPanel row = createRow("fdsfdsfdsfsd",32);
+        row.setPreferredSize(new Dimension(PluginPanel.PANEL_WIDTH,40));
+        JPanel row1 = createRow("fdsfdsfdsfsd",32);
+        row1.setPreferredSize(new Dimension(PluginPanel.PANEL_WIDTH,40));
+        mainPanel.add(row);
+        mainPanel.add(row1);
+
+        add(mainPanel,BorderLayout.CENTER);
+
+        JButton addButton = new JButton("Add");
+        addButton.addActionListener(e ->
+                {
+                }
+                );
+
+        add(addButton,BorderLayout.SOUTH);
     }
 
-    @Override
     protected void rebuild()
     {
-        removeAll();
-            setLayout(new MigLayout("wrap 1"));
-        JPanel row = createRow("fdsfdsfdsfsd",32);
-        row.setPreferredSize(new Dimension(PluginPanel.PANEL_WIDTH,30));
-        add(row);
-        add(row);
-        revalidate();
+    }
+
+    private void addRow()
+    {
+
     }
 
     protected JPanel createRow(String text,int duration)
     {
         JPanel container = new JPanel(new BorderLayout());
-        container.setBorder(new EmptyBorder(7, 7, 6, 0));
+        container.setBorder(new EmptyBorder(5, 7, 0, 0));
         container.setBackground(ColorScheme.DARKER_GRAY_COLOR);
 
         JPanel textPane = new JPanel(new GridLayout(2,1));
@@ -59,7 +80,7 @@ public class TasksPanel extends QuestsPanelContainer {
         textPane.add(time);
 
         JButton button = new JButton("x");
-        button.setPreferredSize(new Dimension(10,10));
+        button.setPreferredSize(new Dimension(20,20));
         button.setBorder(new EmptyBorder(0, 0, 0, 5));
         SwingUtil.removeButtonDecorations(button);
 

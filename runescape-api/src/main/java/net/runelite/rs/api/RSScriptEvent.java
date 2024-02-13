@@ -32,7 +32,7 @@ import net.runelite.api.widgets.Widget;
 import net.runelite.api.ScriptEvent;
 import net.runelite.mapping.Import;
 
-public interface RSScriptEvent extends ScriptEvent
+public interface RSScriptEvent extends ScriptEvent, RSNode
 {
 	@Import("args")
 	Object[] getArguments();
@@ -48,6 +48,9 @@ public interface RSScriptEvent extends ScriptEvent
 
 	@Import("opIndex")
 	int getOp();
+
+	@Import("opIndex")
+	RSScriptEvent setOp(int op);
 
 	@Import("targetName")
 	String getOpbase();

@@ -96,7 +96,6 @@ public class TimersPlugin extends Plugin
 	private static final String CANNON_DESTROYED_MESSAGE = "Your cannon has been destroyed!";
 	private static final String CANNON_BROKEN_MESSAGE = "<col=ef1020>Your cannon has broken!";
 	private static final String FROZEN_MESSAGE = "<col=ef1020>You have been frozen!</col>";
-	private static final String GOD_WARS_ALTAR_MESSAGE = "you recharge your prayer.";
 	private static final String STAFF_OF_THE_DEAD_SPEC_EXPIRED_MESSAGE = "Your protection fades away";
 	private static final String STAFF_OF_THE_DEAD_SPEC_MESSAGE = "Spirits of deceased evildoers offer you their protection";
 	private static final String PRAYER_ENHANCE_EXPIRED = "<col=ff0000>Your prayer enhance effect has worn off.</col>";
@@ -104,6 +103,7 @@ public class TimersPlugin extends Plugin
 	private static final String RESURRECT_THRALL_MESSAGE_START = ">You resurrect a ";
 	private static final String RESURRECT_THRALL_MESSAGE_END = " thrall.</col>";
 	private static final String WARD_OF_ARCEUUS_MESSAGE = ">Your defence against Arceuus magic has been strengthened.</col>";
+	private static final String MARK_OF_DARKNESS_MESSAGE = "You have placed a Mark of Darkness upon yourself.</col>";
 	private static final String PICKPOCKET_FAILURE_MESSAGE = "You fail to pick ";
 	private static final String DODGY_NECKLACE_PROTECTION_MESSAGE = "Your dodgy necklace protects you.";
 	private static final String SHADOW_VEIL_PROTECTION_MESSAGE = "Your attempt to steal goes unnoticed.";
@@ -203,6 +203,30 @@ public class TimersPlugin extends Plugin
 			else
 			{
 				removeGameTimer(VENGEANCE);
+			}
+		}
+
+		if (event.getVarbitId() == Varbits.SPELLBOOK_SWAP && config.showSpellbookSwap())
+		{
+			if (event.getValue() == 1)
+			{
+				createGameTimer(SPELLBOOK_SWAP);
+			}
+			else
+			{
+				removeGameTimer(SPELLBOOK_SWAP);
+			}
+		}
+
+		if (event.getVarbitId() == Varbits.SPELLBOOK_SWAP && config.showSpellbookSwap())
+		{
+			if (event.getValue() == 1)
+			{
+				createGameTimer(SPELLBOOK_SWAP);
+			}
+			else
+			{
+				removeGameTimer(SPELLBOOK_SWAP);
 			}
 		}
 
@@ -555,6 +579,11 @@ public class TimersPlugin extends Plugin
 		{
 			updateVarTimer(FARMERS_AFFINITY, event.getValue(), i -> i * 20);
 		}
+
+		if (event.getVarbitId() == Varbits.GOD_WARS_ALTAR_COOLDOWN && config.showGodWarsAltar())
+		{
+			updateVarTimer(GOD_WARS_ALTAR, event.getValue(), i -> i * 100);
+		}
 	}
 
 	@Subscribe
@@ -678,6 +707,7 @@ public class TimersPlugin extends Plugin
 			removeGameTimer(RESURRECT_THRALL);
 			removeGameTimer(SHADOW_VEIL);
 			removeGameTimer(WARD_OF_ARCEUUS);
+			removeGameTimer(MARK_OF_DARKNESS);
 		}
 
 		if (!config.showArceuusCooldown())
@@ -687,6 +717,7 @@ public class TimersPlugin extends Plugin
 			removeGameTimer(SHADOW_VEIL_COOLDOWN);
 			removeGameTimer(WARD_OF_ARCEUUS_COOLDOWN);
 			removeGameTimer(CORRUPTION_COOLDOWN);
+			removeGameTimer(MARK_OF_DARKNESS_COOLDOWN);
 		}
 
 		if (!config.showAntiPoison())
@@ -707,6 +738,11 @@ public class TimersPlugin extends Plugin
 		if (!config.showFarmersAffinity())
 		{
 			removeVarTimer(FARMERS_AFFINITY);
+		}
+
+		if (!config.showGodWarsAltar())
+		{
+			removeVarTimer(GOD_WARS_ALTAR);
 		}
 
 		if (!config.showLiquidAdrenaline())
@@ -759,11 +795,6 @@ public class TimersPlugin extends Plugin
 		if (message.equals(ABYSSAL_SIRE_STUN_MESSAGE) && config.showAbyssalSireStun())
 		{
 			createGameTimer(ABYSSAL_SIRE_STUN);
-		}
-
-		if (config.showGodWarsAltar() && message.equalsIgnoreCase(GOD_WARS_ALTAR_MESSAGE))//Normal altars are "You recharge your Prayer points." while gwd is "You recharge your Prayer."
-		{
-			createGameTimer(GOD_WARS_ALTAR);
 		}
 
 		if (config.showCannon())
@@ -826,6 +857,10 @@ public class TimersPlugin extends Plugin
 			{
 				createGameTimer(WARD_OF_ARCEUUS, Duration.of(magicLevel, RSTimeUnit.GAME_TICKS));
 			}
+			else if (message.endsWith(MARK_OF_DARKNESS_MESSAGE))
+			{
+				createGameTimer(MARK_OF_DARKNESS, Duration.of(magicLevel, RSTimeUnit.GAME_TICKS));
+			}
 			else if (message.contains(RESURRECT_THRALL_MESSAGE_START) && message.endsWith(RESURRECT_THRALL_MESSAGE_END))
 			{
 				// by default the thrall lasts 1 tick per magic level
@@ -840,6 +875,15 @@ public class TimersPlugin extends Plugin
 					t += t / 2; // 50% boost
 				}
 				createGameTimer(RESURRECT_THRALL, Duration.of(t, RSTimeUnit.GAME_TICKS));
+			}
+		}
+
+		if (config.showArceuusCooldown())
+		{
+			final int magicLevel = client.getRealSkillLevel(Skill.MAGIC);
+			if (message.endsWith(MARK_OF_DARKNESS_MESSAGE))
+			{
+				createGameTimer(MARK_OF_DARKNESS_COOLDOWN, Duration.of(magicLevel - 10, RSTimeUnit.GAME_TICKS));
 			}
 		}
 

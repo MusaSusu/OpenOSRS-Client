@@ -41,10 +41,6 @@ public class MultiplexingPluginPanel extends PluginPanel
 		pushState(root);
 	}
 
-	public String getcurrent(){
-		return current.toString();
-	}
-
 	public void destroy()
 	{
 		for (int i = getComponentCount() - 1; i > 0; i--)

@@ -264,10 +264,20 @@ public class ConfigManager
 		List<Object> allKeys = properties.keySet().stream()
 				.filter(k -> k.toString().startsWith(prefix))
 				.collect(Collectors.toList());
-
 		for (Object wholeKey : allKeys)
 		{
 			this.ozonePanelProperties.put(wholeKey,properties.get(wholeKey));
+		}
+	}
+
+	public void syncProperties(String prefix)
+	{
+		List<Object> allKeys = ozonePanelProperties.keySet().stream()
+				.filter(k -> k.toString().startsWith(prefix))
+				.collect(Collectors.toList());
+		for (Object wholeKey : allKeys)
+		{
+			this.properties.put(wholeKey,ozonePanelProperties.get(wholeKey));
 		}
 	}
 

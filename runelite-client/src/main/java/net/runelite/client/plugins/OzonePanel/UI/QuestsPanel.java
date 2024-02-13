@@ -83,5 +83,4 @@ public class QuestsPanel extends QuestsPanelContainer {
         section.add(button,"span,grow");
         return section;
     }
-
 }

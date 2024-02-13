@@ -1053,8 +1053,7 @@ public class GpuPlugin extends Plugin implements DrawCallbacks
 		if (computeMode == ComputeMode.NONE)
 		{
 			targetBufferOffset += sceneUploader.upload(model,
-				tileX, tileY,
-				tileX << Perspective.LOCAL_COORD_BITS, tileY << Perspective.LOCAL_COORD_BITS,
+				0, 0,
 				vertexBuffer, uvBuffer,
 				true);
 		}
@@ -1782,7 +1781,7 @@ public class GpuPlugin extends Plugin implements DrawCallbacks
 
 	private int getScaledValue(final double scale, final int value)
 	{
-		return (int) (value * scale + .5);
+		return (int) (value * scale);
 	}
 
 	private void glDpiAwareViewport(final int x, final int y, final int width, final int height)

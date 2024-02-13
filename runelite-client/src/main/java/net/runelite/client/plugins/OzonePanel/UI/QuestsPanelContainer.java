@@ -3,7 +3,6 @@ package net.runelite.client.plugins.OzonePanel.UI;
 import lombok.Getter;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.OzonePanel.MusaConfig;
-import net.runelite.client.ui.components.ComboBoxListRenderer;
 import net.runelite.client.util.Text;
 import net.unethicalite.client.config.UnethicaliteConfig;
 
@@ -42,7 +41,6 @@ public abstract class QuestsPanelContainer extends JPanel
         JPanel section = new JPanel();
         section.add(new JLabel(text));
         JComboBox<Enum<?>> box = new JComboBox<>(type.getEnumConstants());
-        box.setRenderer(new ComboBoxListRenderer<>());
         box.setForeground(Color.WHITE);
         box.setFocusable(false);
 
