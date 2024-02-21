@@ -84,7 +84,8 @@ public class PluginListPanel extends PluginPanel
 		"Notification",
 		"Plugin Hub",
 		"Skilling",
-		"XP"
+		"XP",
+		"Ozone"
 	);
 
 	private final ConfigManager configManager;
