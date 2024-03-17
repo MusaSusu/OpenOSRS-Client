@@ -257,7 +257,7 @@ public class ConfigManager
 
 	public void setOzoneProperties(String prefix)
 	{
-		if (ozonePanelProperties.keySet().stream().anyMatch(k-> k.toString().startsWith(prefix)))
+		if (ozonePanelProperties.keySet().stream().anyMatch(k -> k.toString().startsWith(prefix)))
 		{
 			return;
 		}
@@ -266,7 +266,7 @@ public class ConfigManager
 				.collect(Collectors.toList());
 		for (Object wholeKey : allKeys)
 		{
-			this.ozonePanelProperties.put(wholeKey,properties.get(wholeKey));
+			this.ozonePanelProperties.put(wholeKey, properties.get(wholeKey));
 		}
 	}
 
@@ -277,11 +277,11 @@ public class ConfigManager
 				.collect(Collectors.toList());
 		for (Object wholeKey : allKeys)
 		{
-			this.properties.put(wholeKey,ozonePanelProperties.get(wholeKey));
+			this.properties.put(wholeKey, ozonePanelProperties.get(wholeKey));
 		}
 	}
 
-	public String getOzoneConfiguration(String groupName,String key)
+	public String getOzoneConfiguration(String groupName, String key)
 	{
 		return properties.getProperty(getWholeKey(groupName, null, key));
 	}
@@ -297,7 +297,7 @@ public class ConfigManager
 			}
 			catch (Exception e)
 			{
-				log.warn("Unable to unmarshal {} ", getWholeKey(groupName,null, key), e);
+				log.warn("Unable to unmarshal {} ", getWholeKey(groupName, null, key), e);
 			}
 		}
 		return null;

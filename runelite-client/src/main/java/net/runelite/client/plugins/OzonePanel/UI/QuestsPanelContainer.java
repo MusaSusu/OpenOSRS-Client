@@ -6,8 +6,12 @@ import net.runelite.client.plugins.OzonePanel.MusaConfig;
 import net.runelite.client.util.Text;
 import net.unethicalite.client.config.UnethicaliteConfig;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JComboBox;
+
+import java.awt.Color;
 import java.awt.event.ItemEvent;
 
 
@@ -46,7 +50,7 @@ public abstract class QuestsPanelContainer extends JPanel
 
         try
         {
-            Enum<?> selectedItem = Enum.valueOf(type, configManager.getConfiguration(MusaConfig.CONFIG_GROUP,"Quest"));
+            Enum<?> selectedItem = Enum.valueOf(type, configManager.getConfiguration(MusaConfig.CONFIG_GROUP, "Quest"));
             box.setSelectedItem(selectedItem);
             box.setToolTipText(Text.titleCase(selectedItem));
         }

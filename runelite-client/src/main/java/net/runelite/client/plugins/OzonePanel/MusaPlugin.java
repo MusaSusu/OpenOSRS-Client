@@ -6,8 +6,6 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.plugins.OzonePanel.UI.MusaPanelRepo;
-import net.runelite.client.plugins.OzonePanel.UI.Scripts.ScriptsConfigPanel;
-import net.runelite.client.plugins.OzonePanel.UI.Scripts.ScriptsPluginsListPanel;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;

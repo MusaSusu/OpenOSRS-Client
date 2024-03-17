@@ -1,25 +1,29 @@
 package net.runelite.client.plugins.OzonePanel.UI.Tasks;
 
-import lombok.Getter;
-import net.miginfocom.swing.MigLayout;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.OzonePanel.MusaConfig;
-import net.runelite.client.plugins.OzonePanel.UI.MusaPanelRepo;
-import net.runelite.client.plugins.OzonePanel.UI.QuestsPanelContainer;
 import net.runelite.client.plugins.config.FixedWidthPanel;
-import net.runelite.client.ui.*;
+import net.runelite.client.ui.ColorScheme;
+import net.runelite.client.ui.FontManager;
+import net.runelite.client.ui.PluginPanel;
 import net.runelite.client.ui.components.shadowlabel.JShadowedLabel;
 import net.runelite.client.util.SwingUtil;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 
 
 @Singleton
-public class TasksPanel extends JPanel {
+public class TasksPanel extends JPanel
+{
 
     private final FixedWidthPanel mainPanel = new FixedWidthPanel();
     @Inject
@@ -30,14 +34,14 @@ public class TasksPanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        JPanel row = createRow("fdsfdsfdsfsd",32);
-        row.setPreferredSize(new Dimension(PluginPanel.PANEL_WIDTH,40));
-        JPanel row1 = createRow("fdsfdsfdsfsd",32);
-        row1.setPreferredSize(new Dimension(PluginPanel.PANEL_WIDTH,40));
+        JPanel row = createRow("fdsfdsfdsfsd", 32);
+        row.setPreferredSize(new Dimension(PluginPanel.PANEL_WIDTH, 40));
+        JPanel row1 = createRow("fdsfdsfdsfsd", 32);
+        row1.setPreferredSize(new Dimension(PluginPanel.PANEL_WIDTH, 40));
         mainPanel.add(row);
         mainPanel.add(row1);
 
-        add(mainPanel,BorderLayout.CENTER);
+        add(mainPanel, BorderLayout.CENTER);
 
         JButton addButton = new JButton("Add");
         addButton.addActionListener(e ->
@@ -45,7 +49,7 @@ public class TasksPanel extends JPanel {
                 }
                 );
 
-        add(addButton,BorderLayout.SOUTH);
+        add(addButton, BorderLayout.SOUTH);
     }
 
     protected void rebuild()
@@ -57,18 +61,18 @@ public class TasksPanel extends JPanel {
 
     }
 
-    protected JPanel createRow(String text,int duration)
+    protected JPanel createRow(String text, int duration)
     {
         JPanel container = new JPanel(new BorderLayout());
         container.setBorder(new EmptyBorder(5, 7, 0, 0));
         container.setBackground(ColorScheme.DARKER_GRAY_COLOR);
 
-        JPanel textPane = new JPanel(new GridLayout(2,1));
+        JPanel textPane = new JPanel(new GridLayout(2, 1));
         textPane.setBorder(new EmptyBorder(0, 0, 0, 5));
         textPane.setBackground(ColorScheme.DARKER_GRAY_COLOR);
 
         JShadowedLabel title = new JShadowedLabel(text);
-        title.setBorder(new EmptyBorder(0,0,5,0));
+        title.setBorder(new EmptyBorder(0, 0, 5, 0));
         title.setFont(FontManager.getRunescapeFont());
         title.setForeground(Color.WHITE);
 
@@ -80,12 +84,12 @@ public class TasksPanel extends JPanel {
         textPane.add(time);
 
         JButton button = new JButton("x");
-        button.setPreferredSize(new Dimension(20,20));
+        button.setPreferredSize(new Dimension(20, 20));
         button.setBorder(new EmptyBorder(0, 0, 0, 5));
         SwingUtil.removeButtonDecorations(button);
 
-        container.add(textPane,BorderLayout.WEST);
-        container.add(button,BorderLayout.EAST);
+        container.add(textPane, BorderLayout.WEST);
+        container.add(button, BorderLayout.EAST);
 
         return container;
     }
@@ -94,7 +98,7 @@ public class TasksPanel extends JPanel {
     {
         JPanel panel = new JPanel();
         JButton button = new JButton("X");
-        button.setSize(20,20);
+        button.setSize(20, 20);
         panel.add(button);
         return panel;
     }
