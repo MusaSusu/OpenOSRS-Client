@@ -48,7 +48,7 @@ public class CameraController
                 || point.x > client.getViewportWidth() || point.y > client.getViewportHeight();
     }
 
-    public void alignToNorth(LocalPoint from)
+    public void alignToWest(LocalPoint from)
     {
         int delta = deltaX(angleFromLocalToWest(from));
         if (Math.abs(delta) < 20)
@@ -65,7 +65,24 @@ public class CameraController
         }
     }
 
-    public static double angleFromLocal(LocalPoint A, LocalPoint B, LocalPoint player)
+    public void alignToNorth(LocalPoint from)
+    {
+        int delta = deltaX(angleFromLocalToNorth(from));
+        if (Math.abs(delta) < 20)
+        {
+            return;
+        }
+        try
+        {
+            moveCamera(delta, 0);
+        }
+        catch (AWTException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static double angleFromLocal(LocalPoint A, LocalPoint B, LocalPoint player)
     {
         Vector3D vectorA = new Vector3D(A.getX(), A.getY(), 0);
         Vector3D vectorB = new Vector3D(B.getX(), B.getY(), 0);
@@ -91,14 +108,21 @@ public class CameraController
         return angleFromLocal(target, from, center);
     }
 
-    public static double angleFromLocalToWest(LocalPoint from)
+    private static double angleFromLocalToWest(LocalPoint from)
     {
         LocalPoint center = Players.getLocal().getLocalLocation();
         LocalPoint target = new LocalPoint(center.getX() - 256, center.getY());
         return angleFromLocal(target, from, center);
     }
 
-    public static double angleFromPerspective(Point target, Point from, Point center)
+    private static double angleFromLocalToNorth(LocalPoint from)
+    {
+        LocalPoint center = Players.getLocal().getLocalLocation();
+        LocalPoint target = new LocalPoint(center.getX(), center.getY() + 256);
+        return angleFromLocal(target, from, center);
+    }
+
+    private static double angleFromPerspective(Point target, Point from, Point center)
     {
         Vector3D vectorTarget = new Vector3D(target.getX(), target.getY(), 0);
         Vector3D vectorFrom = new Vector3D(from.getX(), from.getY(), 0);
@@ -118,7 +142,7 @@ public class CameraController
         return angle;
     }
 
-    public static double angleFromPerspective(Point from)
+    private static double angleFromPerspective(Point from)
     {
         Point center = centerOfView();
         Point target = new Point(centerOfView().x, centerOfView().y + 100);
@@ -127,7 +151,7 @@ public class CameraController
 
     //Find x pixel mouse movement needed to align to view.
     //If angle is positive, we rotate clockwise from yaw 0. As in north spins clockwise.
-    public static int deltaX(double angle)
+    private static int deltaX(double angle)
     {
         int targetYaw;
         if (angle > 0)
@@ -136,7 +160,7 @@ public class CameraController
         }
         else
         {
-            targetYaw = (int) (2048 - ((2048 * (angle / 360))));
+            targetYaw = (int) (2048 - ((2048 * (-angle / 360))));
         }
         System.out.println("targetYaw = " + targetYaw);
         System.out.println("currentYaw = " + Static.getClient().getCameraYaw());
@@ -157,7 +181,7 @@ public class CameraController
         return deltaYaw / 2;
     }
 
-    public static Point centerOfView()
+    private static Point centerOfView()
     {
         int x  = (Static.getClient().getViewportHeight() / 2) + (Static.getClient().getViewportXOffset());
         int y = (Static.getClient().getViewportHeight() / 2) + (Static.getClient().getViewportYOffset());
