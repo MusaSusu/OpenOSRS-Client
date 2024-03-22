@@ -130,7 +130,6 @@ public class InteractionManager
 								int param1 = event.getParam1();
 								int id = event.getIdentifier();
 								int itemId = event.getItemId();
-								log.debug("param 0: " + param0 + "param 1: " + param1 + "id: " + id + "itemid: " + itemId );
 								if (itemId != -1)
 								{
 									client.invokeWidgetAction(id, param1, param0, itemId, "");

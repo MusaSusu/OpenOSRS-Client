@@ -37,6 +37,7 @@ jobs:
       - name: Bootstrap
         run: ./gradlew bootstrapSnapshot -x test -x checkstyleMain --console=plain
 
+
   checkstyleMain:
     name: Checkstyle main
     runs-on: ubuntu-latest
