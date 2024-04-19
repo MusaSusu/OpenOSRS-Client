@@ -27,7 +27,7 @@ jobs:
         run: ./gradlew assemble --console=plain
       - name: Building
         run: ./gradlew build --stacktrace -x test -x checkstyleMain -x checkstyleTest --console=plain
-
+        
   checkstyleMain:
     name: Checkstyle main
     runs-on: ubuntu-latest

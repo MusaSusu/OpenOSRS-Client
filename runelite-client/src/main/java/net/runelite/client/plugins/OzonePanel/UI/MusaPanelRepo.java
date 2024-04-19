@@ -11,9 +11,10 @@ import net.runelite.client.ui.components.materialtabs.MaterialTabGroup;
 import net.unethicalite.client.config.UnethicaliteConfig;
 
 import javax.inject.Inject;
-import javax.swing.*;
+
+import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 

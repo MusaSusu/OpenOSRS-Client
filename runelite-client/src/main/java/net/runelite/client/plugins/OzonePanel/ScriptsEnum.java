@@ -1,6 +1,6 @@
 package net.runelite.client.plugins.OzonePanel;
 
-public enum ScriptsEnum {
-
+public enum ScriptsEnum
+{
     Fighter,
 }

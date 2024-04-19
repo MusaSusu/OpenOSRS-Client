@@ -140,7 +140,7 @@ public class Walker
         int nextTileIdx = reachablePath.size() - 1;
         if (nextTileIdx <= MIN_TILES_WALKED_IN_STEP)
         {
-            return step(reachablePath.get(nextTileIdx),reachablePath.get(nextTileIdx));
+            return step(reachablePath.get(nextTileIdx), reachablePath.get(nextTileIdx));
         }
 
         if (nextTileIdx > MAX_TILES_WALKED_IN_STEP)
@@ -149,11 +149,12 @@ public class Walker
         }
 
         int targetDistance = Rand.nextInt(MIN_TILES_WALKED_IN_STEP, nextTileIdx);
-        int targetHover = Rand.nextInt(targetDistance+1, targetDistance + 4);
-        if (targetHover > reachablePath.size() - 1){
-            targetHover = reachablePath.size()-1;
-    }
-        return step(reachablePath.get(targetDistance),reachablePath.get(targetHover));
+        int targetHover = Rand.nextInt(targetDistance + 1, targetDistance + 4);
+        if (targetHover > reachablePath.size() - 1)
+        {
+            targetHover = reachablePath.size() - 1;
+        }
+        return step(reachablePath.get(targetDistance), reachablePath.get(targetHover));
     }
 
     public static List<WorldPoint> reachablePath(List<WorldPoint> remainingPath)
@@ -183,7 +184,7 @@ public class Walker
     {
         Player local = Players.getLocal();
         log.debug("Stepping towards " + destination);
-        Movement.walk(destination,hoverPoint);
+        Movement.walk(destination, hoverPoint);
 
         if (local.getWorldLocation().equals(destination))
         {

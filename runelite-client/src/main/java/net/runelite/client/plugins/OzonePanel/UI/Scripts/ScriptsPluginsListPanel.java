@@ -1,12 +1,14 @@
 package net.runelite.client.plugins.OzonePanel.UI.Scripts;
 
 import lombok.Getter;
-import lombok.Setter;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigDescriptor;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
-import net.runelite.client.plugins.*;
+import net.runelite.client.plugins.Plugin;
+import net.runelite.client.plugins.PluginManager;
+import net.runelite.client.plugins.PluginInstantiationException;
+import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.config.PluginConfigurationDescriptor;
 import net.runelite.client.ui.DynamicGridLayout;
 import net.runelite.client.ui.MultiplexingPluginPanel;
@@ -17,14 +19,17 @@ import net.unethicalite.client.Static;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.swing.*;
+import javax.swing.JButton;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.BorderLayout;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Singleton
-public class ScriptsPluginsListPanel extends PluginPanel {
+public class ScriptsPluginsListPanel extends PluginPanel
+{
 
     private final ConfigManager configManager;
     private final PluginManager pluginManager;
@@ -79,35 +84,40 @@ public class ScriptsPluginsListPanel extends PluginPanel {
             mainPanel.add(button);
         }
 
-        add(mainPanel,BorderLayout.CENTER);
+        add(mainPanel, BorderLayout.CENTER);
 
     }
-    void openConfigurationPanel(PluginConfigurationDescriptor plugin) {
+    void openConfigurationPanel(PluginConfigurationDescriptor plugin)
+    {
         ScriptsConfigPanel panel = configPanelProvider.get();
         panel.init(plugin);
         muxer.pushState(panel);
     }
 
-    void startPlugin(PluginConfigurationDescriptor cd) throws PluginInstantiationException {
+    void startPlugin(PluginConfigurationDescriptor cd) throws PluginInstantiationException
+    {
         configManager.syncProperties(cd.getConfigDescriptor().getGroup().value());
         pluginManager.setPluginEnabled(cd.getPlugin(), true);
         pluginManager.startPlugin(cd.getPlugin());
     }
 
-    void stopPlugin(PluginConfigurationDescriptor cd) throws PluginInstantiationException {
+    void stopPlugin(PluginConfigurationDescriptor cd) throws PluginInstantiationException
+    {
         configManager.syncProperties(cd.getConfigDescriptor().getGroup().value());
         pluginManager.setPluginEnabled(cd.getPlugin(), false);
         pluginManager.startPlugin(cd.getPlugin());
     }
 
-    PluginConfigurationDescriptor getDesc() {
+    PluginConfigurationDescriptor getDesc()
+    {
         Plugin plugin = Static.getPluginManager().getPlugins().stream().filter(x -> x.getName().matches("Unethical Fighter")).findFirst().orElse(null);
         assert plugin != null;
         PluginConfigurationDescriptor desc = makeDesc(plugin);
         return desc;
     }
 
-    private PluginConfigurationDescriptor makeDesc(Plugin plugin) {
+    private PluginConfigurationDescriptor makeDesc(Plugin plugin)
+    {
         PluginDescriptor descriptor = plugin.getClass().getAnnotation(PluginDescriptor.class);
         Config config = Static.getPluginManager().getPluginConfigProxy(plugin);
         ConfigDescriptor configDescriptor = config == null ? null : Static.getConfigManager().getConfigDescriptor(config);

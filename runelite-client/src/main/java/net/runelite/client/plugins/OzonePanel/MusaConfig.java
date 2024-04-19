@@ -6,7 +6,8 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
 @ConfigGroup("Musa Repo")
-public interface MusaConfig extends Config {
+public interface MusaConfig extends Config
+{
 
     String CONFIG_GROUP = "Musa Repo";
 
@@ -16,7 +17,8 @@ public interface MusaConfig extends Config {
             description = "",
             position = 0
     )
-    default QuestEnum questSelection(){ return QuestEnum.RomeoAndJuliet;}
+    default QuestEnum questSelection()
+    { return QuestEnum.RomeoAndJuliet; }
 
     @ConfigItem(
             keyName = "Quest",
@@ -24,6 +26,7 @@ public interface MusaConfig extends Config {
             description = "",
             position = 1
     )
-    default boolean questRunning(){return false;}
+    default boolean questRunning()
+    { return false; }
 }
 

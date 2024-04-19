@@ -13,7 +13,6 @@ import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
-import net.unethicalite.api.commons.Rand;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.game.Vars;
 import net.unethicalite.api.movement.pathfinder.Walker;
@@ -95,30 +94,28 @@ public class Movement
 		int sceneX = walkPoint.getX() - client.getBaseX();
 		int sceneY = walkPoint.getY() - client.getBaseY();
 
-		double angle = CameraController.angleFromLocal(LocalPoint.fromScene(sceneX, sceneY));
-		CameraController.alignToNorth(angle);
+		//double angle = CameraController.angleFromLocal(LocalPoint.fromScene(sceneX, sceneY));
+		//CameraController.alignToNorth(angle);
 
 		Point canv = Perspective.localToCanvas(client, LocalPoint.fromScene(sceneX, sceneY), client.getPlane());
 		int x = canv != null ? canv.getX() : -1;
 		int y = canv != null ? canv.getY() : -1;
 
-		int sceneX1 = hoverPoint.getX() - client.getBaseX();
-		int sceneY1 = hoverPoint.getY() - client.getBaseY();
-		Point canv1 = Perspective.localToCanvas(client, LocalPoint.fromScene(sceneX1, sceneY1), client.getPlane());
-		int x1 = canv != null ? canv1.getX() : -1;
-		int y1 = canv != null ? canv1.getY() : -1;
+		//int sceneX1 = hoverPoint.getX() - client.getBaseX();
+		//int sceneY1 = hoverPoint.getY() - client.getBaseY();
+		//Point canv1 = Perspective.localToCanvas(client, LocalPoint.fromScene(sceneX1, sceneY1), client.getPlane());
+		//int x1 = canv != null ? canv1.getX() : -1;
+		//int y1 = canv != null ? canv1.getY() : -1;
 
-		if (Rand.nextInt(0,15) < 3)
-		{
 			client.interact(
 					0,
 					MenuAction.WALK.getId(),
 					sceneX,
 					sceneY,
 					x,
-					y
-			);
-		}
+					y);
+
+		/*
 		interactionHandler.combineInteract(
 				0,
 				MenuAction.WALK.getId(),
@@ -130,11 +127,13 @@ public class Movement
 				x1,
 				y1
 				);
+
+		 */
 	}
 
 	public static void walk(WorldPoint worldPoint)
 	{
-		walk(worldPoint,worldPoint);
+		walk(worldPoint, worldPoint);
 	}
 
 	public static boolean walkTo(WorldArea worldArea)

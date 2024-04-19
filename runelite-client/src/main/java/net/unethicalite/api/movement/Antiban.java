@@ -7,9 +7,10 @@ import net.unethicalite.api.widgets.Widgets;
 import net.unethicalite.client.Static;
 import net.unethicalite.client.managers.interaction.InteractionHandler;
 
-import java.awt.*;
+import java.awt.AWTException;
 
-public class Antiban {
+public class Antiban
+{
 
     public static void randomMouseMove()
     {
@@ -20,10 +21,12 @@ public class Antiban {
     {
         if (Tabs.isOpen(Tab.SKILLS))
         {
-            if (InteractionHandler.checkSkillCounter()){
+            if (InteractionHandler.checkSkillCounter())
+            {
                 Widgets.get(Tab.INVENTORY.getWidgetInfo()).interact(0);
             }
-            else{
+            else
+            {
                 return;
             }
         }
@@ -33,12 +36,16 @@ public class Antiban {
         }
     }
 
-    public static void moveCamera(){
+    public static void moveCamera()
+    {
         if (InteractionHandler.checkCameraCounter())
         {
-            try {
-                Static.getInteractionHandler().moveCamera(Rand.nextInt(-50,50),Rand.nextInt(-20,20));
-            } catch (AWTException e) {
+            try
+            {
+                Static.getInteractionHandler().moveCamera(Rand.nextInt(-50, 50), Rand.nextInt(-20, 20));
+            }
+            catch (AWTException e)
+            {
                 throw new RuntimeException(e);
             }
         }

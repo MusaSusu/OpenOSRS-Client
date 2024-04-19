@@ -6,21 +6,69 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 import net.runelite.api.events.ConfigButtonClicked;
-import net.runelite.client.config.*;
+
+import net.runelite.client.config.Config;
+import net.runelite.client.config.ConfigManager;
+import net.runelite.client.config.ConfigDescriptor;
+import net.runelite.client.config.ConfigTitleDescriptor;
+import net.runelite.client.config.ConfigItemDescriptor;
+import net.runelite.client.config.ConfigSectionDescriptor;
+import net.runelite.client.config.ConfigObject;
+import net.runelite.client.config.ConfigSection;
+import net.runelite.client.config.ConfigItem;
+import net.runelite.client.config.ConfigTitle;
+import net.runelite.client.config.Units;
+import net.runelite.client.config.Range;
+import net.runelite.client.config.Keybind;
+import net.runelite.client.config.ModifierlessKeybind;
 import net.runelite.client.config.Button;
-import net.runelite.client.plugins.*;
-import net.runelite.client.plugins.config.*;
+
+import net.runelite.client.plugins.Plugin;
+import net.runelite.client.plugins.PluginInstantiationException;
+import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.plugins.PluginManager;
+
+import net.runelite.client.plugins.config.PluginConfigurationDescriptor;
+import net.runelite.client.plugins.config.FixedWidthPanel;
+import net.runelite.client.plugins.config.HotkeyButton;
+
+
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.DynamicGridLayout;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.PluginPanel;
 import net.runelite.client.ui.components.ToggleButton;
 import net.runelite.client.ui.components.colorpicker.RuneliteColorPicker;
-import net.runelite.client.util.*;
+
+import net.runelite.client.util.SwingUtil;
+import net.runelite.client.util.ImageUtil;
+import net.runelite.client.util.DeferredDocumentChangedListener;
+import net.runelite.client.util.Text;
+
 import net.unethicalite.client.Static;
 
 import javax.inject.Inject;
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
+import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.JPasswordField;
+import javax.swing.BorderFactory;
+import javax.swing.JList;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
@@ -28,19 +76,33 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSpinnerUI;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.JTextComponent;
-import java.awt.*;
-import java.awt.event.*;
+
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.util.*;
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.EnumSet;
+import java.util.TreeMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class ScriptsConfigPanel extends PluginPanel {
-
+public class ScriptsConfigPanel extends PluginPanel
+{
     private static final int SPINNER_FIELD_WIDTH = 6;
     private static final ImageIcon SECTION_EXPAND_ICON;
     private static final ImageIcon SECTION_EXPAND_ICON_HOVER;
@@ -99,7 +161,7 @@ public class ScriptsConfigPanel extends PluginPanel {
 
         mainPanel = new FixedWidthPanel();
         mainPanel.setBorder(new EmptyBorder(8, 5, 0, 5));
-        mainPanel.setLayout(new DynamicGridLayout(0,1,0,0));
+        mainPanel.setLayout(new DynamicGridLayout( 0, 1, 0, 0));
         mainPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JPanel northPanel = new FixedWidthPanel();
@@ -117,7 +179,8 @@ public class ScriptsConfigPanel extends PluginPanel {
 
     }
 
-    public void rebuild(boolean refresh){
+    public void rebuild(boolean refresh)
+    {
 
         mainPanel.removeAll();
 
@@ -240,8 +303,10 @@ public class ScriptsConfigPanel extends PluginPanel {
             }
         }
 
-        for (ConfigItemDescriptor cid : cd.getItems()) {
-            if (!shouldBeHidden(cid)) {
+        for (ConfigItemDescriptor cid : cd.getItems())
+        {
+            if (!shouldBeHidden(cid))
+            {
                 continue;
             }
 
@@ -252,21 +317,29 @@ public class ScriptsConfigPanel extends PluginPanel {
             JLabel configEntryName = new JLabel(name);
             configEntryName.setForeground(Color.WHITE);
             String description = cid.getItem().description();
-            if (!"".equals(description)) {
+            if (!"".equals(description))
+            {
                 configEntryName.setToolTipText("<html>" + name + ":<br>" + description + "</html>");
             }
 
             //PluginListItem.addLabelPopupMenu(configEntryName, createResetMenuItem(pluginConfig, cid));
             item.add(configEntryName, BorderLayout.CENTER);
 
-            if (cid.getType() == Button.class) {
+            if (cid.getType() == Button.class)
+            {
                 item.remove(configEntryName);
                 item.add(createButton(cd, cid), BorderLayout.CENTER);
-            } else if (cid.getType() == boolean.class) {
+            }
+            else if (cid.getType() == boolean.class)
+            {
                 item.add(createCheckbox(cd, cid), BorderLayout.EAST);
-            } else if (cid.getType() == int.class) {
+            }
+            else if (cid.getType() == int.class)
+            {
                 item.add(createIntSpinner(cd, cid), BorderLayout.EAST);
-            } else if (cid.getType() == double.class) {
+            }
+            else if (cid.getType() == double.class)
+            {
                 item.add(createDoubleSpinner(cd, cid), BorderLayout.EAST);
             }
             else if (cid.getType() == String.class)
@@ -407,17 +480,23 @@ public class ScriptsConfigPanel extends PluginPanel {
             {
                 if (pluginToggle.isSelected())
                 {
-                    try {
+                    try
+                    {
                         pluginList.startPlugin(pluginConfig);
-                    } catch (PluginInstantiationException e) {
+                    }
+                    catch (PluginInstantiationException e)
+                    {
                         throw new RuntimeException(e);
                     }
                 }
                 else
                 {
-                    try {
+                    try
+                    {
                         pluginList.stopPlugin(pluginConfig);
-                    } catch (PluginInstantiationException e) {
+                    }
+                    catch (PluginInstantiationException e)
+                    {
                         throw new RuntimeException(e);
                     }
                 }
