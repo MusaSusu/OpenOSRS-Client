@@ -62,7 +62,6 @@ public class Pathfinder implements Callable<List<WorldPoint>>
 		return false;
 	}
 
-
 	public Pathfinder(CollisionMap collisionMap, Map<WorldPoint, List<Transport>> transports, List<WorldPoint> start, WorldPoint target, boolean avoidWilderness)
 	{
 		this(collisionMap, transports, start, target.toWorldArea(), avoidWilderness);
@@ -88,7 +87,18 @@ public class Pathfinder implements Callable<List<WorldPoint>>
 		this.targetsInWilderness = targetTiles.stream().anyMatch(Pathfinder::isInWilderness);
 		if (targetTiles.stream().allMatch(collisionMap::fullBlock))
 		{
-			log.warn("Walking to a {}, pathfinder will be slow", targetTiles.size() == 1 ? "blocked tile" : "fully blocked area");
+			WorldPoint nearestWalkableTile = Walker.nearestWalkableTile(targetTiles.get(0));
+			if (nearestWalkableTile != null)
+			{
+				log.warn("Target {} is fully blocked, walking to nearest walkable tile {}",
+					targetTiles.size() == 1 ? "tile" : "area", nearestWalkableTile);
+				this.target = nearestWalkableTile.toWorldArea();
+				this.targetTiles = this.target.toWorldPointList();
+			}
+			else
+			{
+				log.warn("Walking to a fully blocked area, pathfinder will be slow");
+			}
 		}
 	}
 
