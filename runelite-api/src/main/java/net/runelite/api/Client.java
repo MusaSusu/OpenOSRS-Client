@@ -219,6 +219,14 @@ public interface Client extends OAuthApi, GameEngine
 	void setWorldSelectOpen(boolean open);
 
 	/**
+	 * Gets the display name of the active account when launched from the Jagex launcher.
+	 *
+	 * @return The active account's display name, or {@code null} if not launched from the Jagex launcher
+	 */
+	@Nullable
+	String getLauncherDisplayName();
+
+	/**
 	 * DEPRECATED. See getAccountHash instead.
 	 * Gets the current logged in username.
 	 *
@@ -1545,6 +1553,21 @@ public interface Client extends OAuthApi, GameEngine
 	String[] getStringStack();
 
 	/**
+	 * Get the size of one of the cs2 vm's arrays.
+	 * @param arrayId the array id
+	 * @return
+	 */
+	int getArraySizes(int arrayId);
+
+	/**
+	 * Get one of the cs2 vm's arrays. Use {@link #getArraySizes(int)} to get
+	 * the array length.
+	 * @param arrayId the array id
+	 * @return
+	 */
+	int[] getArray(int arrayId);
+
+	/**
 	 * Gets the cs2 vm's active widget
 	 *
 	 * This is used for all {@code cc_*} operations with a {@code 0} operand
@@ -2027,8 +2050,65 @@ public interface Client extends OAuthApi, GameEngine
 	EnumSet<WorldType> getWorldType();
 
 	/**
+	 * Get the camera mode
+	 * @return 0 for normal, 1 for free camera
+	 */
+	int getCameraMode();
+
+	/**
+	 * Set the camera mode
+	 * @param mode 0 for normal, 1 for free camera
+	 */
+	void setCameraMode(int mode);
+
+	/**
+	 * Get the camera focus point x
+	 * Typically this is the player position, but can be other points in cutscenes or in free camera mode.
+	 * @return
+	 */
+	double getCameraFocalPointX();
+
+	/**
+	 * Sets the camera focus point x. Requires the {@link #getCameraMode()} to be free camera.
+	 * @param x
+	 */
+	void setCameraFocalPointX(double x);
+
+	/**
+	 * Get the camera focus point y
+	 * Typically this is the player position, but can be other points in cutscenes or in free camera mode.
+	 * @return
+	 */
+	double getCameraFocalPointY();
+
+	/**
+	 * Sets the camera focus point y. Requires the {@link #getCameraMode()} to be free camera.
+	 * @param y
+	 */
+	void setCameraFocalPointY(double y);
+
+	/**
+	 * Get the camera focus point z
+	 * Typically this is the player position, but can be other points in cutscenes or in free camera mode.
+	 * @return
+	 */
+	double getCameraFocalPointZ();
+
+	/**
+	 * Sets the camera focus point z. Requires the {@link #getCameraMode()} to be free camera.
+	 * @param z
+	 */
+	void setCameraFocalPointZ(double z);
+
+	/**
+	 * Sets the normal moving speed when using oculus orb (default value is 12)
+	 */
+	void setFreeCameraSpeed(int speed);
+
+	/**
 	 * Gets the enabled state for the Oculus orb mode
 	 */
+	@Deprecated
 	int getOculusOrbState();
 
 	/**
@@ -2036,32 +2116,47 @@ public interface Client extends OAuthApi, GameEngine
 	 *
 	 * @param state boolean enabled value
 	 */
+	@Deprecated
 	void setOculusOrbState(int state);
 
 	/**
 	 * Sets the normal moving speed when using oculus orb (default value is 12)
 	 */
+	@Deprecated
 	void setOculusOrbNormalSpeed(int speed);
 
 	/**
 	 * Gets local X coord where the camera is pointing when the Oculus orb is active
 	 */
+	@Deprecated
 	int getOculusOrbFocalPointX();
 
 	/**
 	 * Gets local Y coord where the camera is pointing when the Oculus orb is active
 	 */
+	@Deprecated
 	int getOculusOrbFocalPointY();
+
+	@Deprecated
+	int getOculusOrbFocalPointZ();
 
 	/**
 	 * Sets local X coord where the camera is pointing when the Oculus orb is active
 	 */
+	@Deprecated
 	void setOculusOrbFocalPointX(int xPos);
 
 	/**
 	 * Sets local Y coord where the camera is pointing when the Oculus orb is active
 	 */
+	@Deprecated
 	void setOculusOrbFocalPointY(int yPos);
+
+	/**
+	 * Sets local Z coord where the camera is pointing when the Oculus orb is active
+	 */
+	@Deprecated
+	void setOculusOrbFocalPointZ(int zPos);
 
 	/**
 	 * Opens in-game world hopper interface
@@ -2543,6 +2638,8 @@ public interface Client extends OAuthApi, GameEngine
 	Rasterizer getRasterizer();
 
 	void checkResize();
+
+	void menuAction(int p0, int p1, MenuAction action, int id, int itemId, String option, String target);
 
 	/*
 	 * Unethical

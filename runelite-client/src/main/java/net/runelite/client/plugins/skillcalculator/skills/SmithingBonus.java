@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Jasper Ketelaar <Jasper0781@gmail.com>
+ * Copyright (c) 2024, DapperMickie <rustenhovenmick@gmail.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,52 +22,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.mta.telekinetic;
+package net.runelite.client.plugins.skillcalculator.skills;
 
-import net.runelite.api.coords.LocalPoint;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-public enum Maze
+@AllArgsConstructor
+@Getter(onMethod_ = @Override)
+public enum SmithingBonus implements SkillBonus
 {
-	MAZE_1(100, new LocalPoint(6848, 3904)),
-	MAZE_2(124, new LocalPoint(4928, 6848)),
-	MAZE_3(129, new LocalPoint(7104, 5312)),
-	MAZE_4(53, new LocalPoint(6208, 4928)),
-	MAZE_5(108, new LocalPoint(5056, 5184)),
-	MAZE_6(121, new LocalPoint(3648, 5440)),
-	MAZE_7(71, new LocalPoint(6080, 5696)),
-	MAZE_8(98, new LocalPoint(5952, 7360)),
-	MAZE_9(87, new LocalPoint(5184, 6208)),
-	MAZE_10(91, new LocalPoint(5440, 9024));
+	GOLDSMITH_GAUNTLETS("Goldsmith Gauntlets", 2.5f),
+	;
 
-	private final int walls;
-	private final LocalPoint start;
-
-	Maze(int walls, LocalPoint start)
-	{
-		this.walls = walls;
-		this.start = start;
-	}
-
-	public static Maze fromWalls(int walls)
-	{
-		for (Maze maze : values())
-		{
-			if (maze.getWalls() == walls)
-			{
-				return maze;
-			}
-		}
-
-		return null;
-	}
-
-	public int getWalls()
-	{
-		return walls;
-	}
-
-	public LocalPoint getStart()
-	{
-		return start;
-	}
+	private final String name;
+	private final float value;
 }

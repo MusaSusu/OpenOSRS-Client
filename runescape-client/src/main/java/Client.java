@@ -3,6 +3,9 @@ import com.jagex.oldscape.pub.OtlTokenRequester;
 import com.jagex.oldscape.pub.OtlTokenResponse;
 import com.jagex.oldscape.pub.RefreshAccessTokenRequester;
 import com.jagex.oldscape.pub.RefreshAccessTokenResponse;
+import netscape.javascript.JSObject;
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
@@ -16,9 +19,6 @@ import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
-import netscape.javascript.JSObject;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 @Implements("Client")
 @ObfuscatedName("client")
@@ -122,7 +122,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi, cla
 	@ObfuscatedGetter(
 		intValue = -455589887
 	)
-	static int field513;
+	static int eula;
 	@ObfuscatedName("cn")
 	@ObfuscatedGetter(
 		intValue = 1924556571
@@ -1419,7 +1419,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi, cla
 		gameBuild = 0;
 		isMembersWorld = false;
 		isLowDetail = false;
-		field513 = -1;
+		eula = -1;
 		clientType = -1;
 		field794 = -1;
 		onMobile = false;
@@ -1886,7 +1886,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi, cla
 						Huffman.loginScreen(this, DevicePcmPlayerProvider.fontPlain11, class316.fontPlain12);
 						this.doCycleLoggedOut();
 					} else if (gameState == 25) {
-						class444.method8026();
+						class444.loadRegion();
 					}
 				} else {
 					Huffman.loginScreen(this, DevicePcmPlayerProvider.fontPlain11, class316.fontPlain12);
@@ -2055,7 +2055,8 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi, cla
 		descriptor = "(B)Z",
 		garbageValue = "-92"
 	)
-	boolean method1212() {
+	@Export("otlTokenRequesterInitialized")
+	boolean otlTokenRequesterInitialized() {
 		return this.otlTokenRequester != null;
 	}
 
@@ -2915,7 +2916,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi, cla
 						class59.setLoginResponseString(var40, var36, var41);
 						FaceNormal.updateGameState(10);
 						if (field810.method9558()) {
-							class210.method3930(9);
+							class210.updateLoginIndex(9);
 						}
 					}
 
@@ -3580,7 +3581,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi, cla
 																			field612 += (var10 - field612) / 80;
 																		}
 
-																		FloorUnderlayDefinition.field2198 = Canvas.getTileHeight(class133.localPlayer.x, class133.localPlayer.y, class172.Client_plane) - camFollowHeight;
+																		FloorUnderlayDefinition.oculusOrbFocalPointZ = Canvas.getTileHeight(class133.localPlayer.x, class133.localPlayer.y, class172.Client_plane) - camFollowHeight;
 																	} else if (oculusOrbState == 1) {
 																		class152.method3221();
 																		short var38 = -1;
@@ -3643,9 +3644,9 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi, cla
 																			}
 
 																			if (field605 != 0) {
-																				FloorUnderlayDefinition.field2198 += var7 * field605;
-																				if (FloorUnderlayDefinition.field2198 > 0) {
-																					FloorUnderlayDefinition.field2198 = 0;
+																				FloorUnderlayDefinition.oculusOrbFocalPointZ += var7 * field605;
+																				if (FloorUnderlayDefinition.oculusOrbFocalPointZ > 0) {
+																					FloorUnderlayDefinition.oculusOrbFocalPointZ = 0;
 																				}
 																			}
 																		} else {
@@ -6608,7 +6609,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi, cla
 							class128.field1538 = var2;
 							break;
 						case 21:
-							field513 = Integer.parseInt(var2);
+							eula = Integer.parseInt(var2);
 							break;
 						case 22:
 							class31.gameSessionServiceBaseUrl = var2;
@@ -6691,7 +6692,7 @@ public final class Client extends GameEngine implements Usernamed, OAuthApi, cla
 	public void setOtlTokenRequester(OtlTokenRequester var1) {
 		if (var1 != null) {
 			this.otlTokenRequester = var1;
-			class210.method3930(10);
+			class210.updateLoginIndex(10);
 		}
 	}
 

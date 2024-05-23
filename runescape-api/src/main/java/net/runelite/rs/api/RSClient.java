@@ -787,6 +787,12 @@ public interface RSClient extends RSGameEngine, Client
 	@Override
 	String[] getStringStack();
 
+	@Import("Interpreter_arrayLengths")
+	int[] getArraySizes();
+
+	@Import("Interpreter_arrays")
+	int[][] getArrays();
+
 	@Import("friendSystem")
 	RSFriendSystem getFriendManager();
 
@@ -979,7 +985,7 @@ public interface RSClient extends RSGameEngine, Client
 
 	@Import("oculusOrbNormalSpeed")
 	@Override
-	void setOculusOrbNormalSpeed(int state);
+	void setOculusOrbNormalSpeed(int speed);
 
 	@Import("oculusOrbFocalPointX")
 	@Override
@@ -989,13 +995,21 @@ public interface RSClient extends RSGameEngine, Client
 	@Override
 	int getOculusOrbFocalPointY();
 
+	@Import("oculusOrbFocalPointZ")
+	@Override
+	int getOculusOrbFocalPointZ();
+
 	@Import("oculusOrbFocalPointX")
 	@Override
-	void setOculusOrbFocalPointX(int state);
+	void setOculusOrbFocalPointX(int x);
 
 	@Import("oculusOrbFocalPointY")
 	@Override
-	void setOculusOrbFocalPointY(int state);
+	void setOculusOrbFocalPointY(int y);
+
+	@Import("oculusOrbFocalPointZ")
+	@Override
+	void setOculusOrbFocalPointZ(int z);
 
 	RSTileItem getLastItemDespawn();
 
@@ -1594,6 +1608,12 @@ public interface RSClient extends RSGameEngine, Client
 
 	@Import("SequenceDefinition_cached")
 	RSEvictingDualNodeHashTable getSequenceDefinitionCache();
+
+	@Import("ItemDefinition_cachedModels")
+	RSEvictingDualNodeHashTable getItemModelCache();
+
+	@Import("ItemDefinition_cachedSprites")
+	RSEvictingDualNodeHashTable getItemSpriteCache();
 
 	@Import("archive11")
 	RSEvictingDualNodeHashTable getArchive11();
