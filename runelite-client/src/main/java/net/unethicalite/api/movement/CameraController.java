@@ -122,6 +122,17 @@ public class CameraController
         return angleFromLocal(target, from, center);
     }
 
+    public double angleFromLocalToNorthAtTile(LocalPoint center, LocalPoint from)
+    {
+        LocalPoint target = new LocalPoint(center.getX(), center.getY() + 256);
+        return angleFromLocal(target, from, center);
+    }
+
+    public int deltaFromLocalToNorthAtTile(LocalPoint center, LocalPoint from)
+    {
+        return deltaX(angleFromLocalToNorthAtTile(center, from));
+    }
+
     private static double angleFromPerspective(Point target, Point from, Point center)
     {
         Vector3D vectorTarget = new Vector3D(target.getX(), target.getY(), 0);
@@ -151,7 +162,7 @@ public class CameraController
 
     //Find x pixel mouse movement needed to align to view.
     //If angle is positive, we rotate clockwise from yaw 0. As in north spins clockwise.
-    private static int deltaX(double angle)
+    public int deltaX(double angle)
     {
         int targetYaw;
         if (angle > 0)
